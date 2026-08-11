@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Oncolife Care × Hospital Parceiro — Demo do Hub de Interoperabilidade</title>
+<style>
+  :root{
+    --dark:#18362B; --dark2:#0f2a20; --mint:#00B98E; --mintDim:#0f7f65;
+    --ink:#101828; --muted:#475467; --soft:#667085; --line:#d8e0ea;
+    --bg:#f4f6fb; --white:#ffffff; --light:#E8F5F1; --amber:#B54708;
+    --warnBg:#FFFAEB; --blue:#1570EF; --blueBg:#EFF8FF; --thBg:#f8fafc;
+    --softTop:#f3fbf8; --danger:#D92D20; --dangerBg:#FEF3F2;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4{font-weight:750;letter-spacing:-0.01em;margin:0;}
+  a{color:inherit;}
+  code,.mono{font-family:"SFMono-Regular",ui-monospace,Consolas,monospace;}
+  .tabular{font-variant-numeric:tabular-nums;}
+
+  .watermark{position:sticky;top:0;z-index:70;background:var(--warnBg);color:var(--amber);
+    font-size:.68rem;font-weight:750;text-transform:uppercase;letter-spacing:.06em;
+    text-align:center;padding:.45rem .75rem;border-bottom:1px solid #fde8b8;}
+
+  header.topnav{position:sticky;top:28px;z-index:60;background:rgba(255,255,255,.97);
+    backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .topnav-inner{max-width:1400px;margin:0 auto;padding:10px 20px;display:flex;
+    align-items:center;gap:14px;flex-wrap:wrap;}
+  .brand{font-weight:800;color:var(--dark);font-size:15px;letter-spacing:-.02em;
+    text-decoration:none;cursor:pointer;background:none;border:none;font-family:inherit;
+    padding:0;flex-shrink:0;}
+  .brand span{color:var(--mintDim);}
+  .ato-nav{display:flex;gap:4px;flex-wrap:wrap;flex:1;}
+  .ato-btn{display:flex;align-items:center;gap:6px;border:none;background:transparent;
+    cursor:pointer;padding:6px 10px;border-radius:8px;font-family:inherit;color:var(--soft);
+    font-size:12.5px;font-weight:600;}
+  .ato-btn.active{color:var(--dark);background:var(--light);}
+  .ato-dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;font-size:10px;font-weight:700;background:#fff;color:var(--soft);
+    border:1px solid var(--line);flex-shrink:0;}
+  .ato-btn.active .ato-dot{background:var(--mint);color:#fff;border:none;}
+  .pres-btn{font-size:12px;font-weight:700;padding:7px 12px;border-radius:8px;
+    border:1px solid var(--line);background:#fff;cursor:pointer;font-family:inherit;flex-shrink:0;}
+  .pres-btn:hover{border-color:var(--mint);}
+
+  main{max-width:1200px;margin:0 auto;padding:32px 20px 100px;}
+
+  .kicker{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--amber);background:var(--warnBg);display:inline-block;padding:3px 9px;
+    border-radius:6px;margin-bottom:10px;}
+  h1.title{font-size:22px;font-weight:800;color:var(--dark);margin:0 0 6px;letter-spacing:-.01em;}
+  p.sub{color:var(--muted);font-size:13.5px;max-width:640px;margin:0 0 26px;line-height:1.55;}
+
+  .tag{font-size:.65rem;font-weight:750;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--mintDim);background:var(--light);border-radius:6px;padding:.22rem .5rem;
+    display:inline-block;white-space:nowrap;}
+  .tag.amber{color:var(--amber);background:var(--warnBg);}
+  .tag.blue{color:var(--blue);background:var(--blueBg);}
+  .tag.danger{color:var(--danger);background:var(--dangerBg);}
+  .tag.dark{color:#fff;background:var(--dark);}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;
+    box-shadow:0 1px 2px rgb(16 24 40/4%);}
+  .card h2{font-size:15px;color:var(--dark);margin:0 0 4px;}
+
+  .btn-primary{background:var(--mint);color:#fff;border:none;font-weight:700;font-size:13.5px;
+    padding:11px 20px;border-radius:10px;cursor:pointer;font-family:inherit;}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-primary:disabled{opacity:.5;cursor:default;}
+  .btn-secondary{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:700;
+    font-size:13px;padding:9px 16px;border-radius:10px;cursor:pointer;font-family:inherit;}
+  .btn-secondary:hover{border-color:var(--ink);}
+  .btn-danger{background:var(--danger);color:#fff;border:none;font-weight:700;font-size:13.5px;
+    padding:11px 20px;border-radius:10px;cursor:pointer;font-family:inherit;}
+  .btn-mint-outline{background:var(--light);color:var(--mintDim);border:none;font-weight:700;
+    font-size:12px;padding:8px 14px;border-radius:9px;cursor:pointer;font-family:inherit;}
+
+  .actions-row{display:flex;justify-content:flex-end;gap:10px;margin-top:26px;flex-wrap:wrap;}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  th{background:var(--thBg);color:var(--soft);border-bottom:1px solid var(--line);text-align:left;
+    padding:8px 10px;font-weight:700;}
+  td{padding:7px 10px;border-bottom:1px solid var(--line);}
+
+  .grid{display:grid;gap:16px;}
+  .grid-4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));}
+  .grid-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));}
+  .grid-3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .kpi .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.03em;color:var(--soft);margin-bottom:6px;}
+  .kpi .val{font-size:23px;font-weight:800;color:var(--ink);}
+  .kpi .val.amber{color:var(--amber);}
+  .kpi .val.mint{color:var(--mintDim);}
+
+  .hero{background:radial-gradient(ellipse 60% 50% at 85% 10%, rgba(0,185,142,.22), transparent 55%),
+      linear-gradient(155deg, var(--dark) 0%, #1a4a38 50%, var(--dark2) 100%);
+    color:#fff;padding:64px 20px 76px;text-align:center;}
+  .hero h1{font-size:34px;font-weight:800;margin:0 0 16px;max-width:760px;margin-left:auto;margin-right:auto;line-height:1.2;}
+  .hero p{color:rgba(255,255,255,.75);font-size:15.5px;max-width:640px;margin:0 auto 30px;line-height:1.6;}
+  .chip{border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);
+    color:#fff;display:inline-block;padding:5px 12px;font-size:11px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.08em;}
+  .hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--mint);color:#fff;
+    font-weight:800;padding:13px 26px;border-radius:12px;text-decoration:none;font-size:14.5px;
+    border:none;cursor:pointer;font-family:inherit;}
+  kbd.chip{padding:3px 7px;font-size:10.5px;}
+
+  /* console skins */
+  .console-shell{border-radius:14px;overflow:hidden;}
+  .console-header{padding:10px 16px;font-size:10.5px;font-weight:800;text-transform:uppercase;
+    letter-spacing:.06em;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+  .console-body{padding:18px;}
+  .console-shell.tasy{background:#eef1f5;border:1px solid #c7d0dc;border-radius:4px;}
+  .console-shell.tasy .console-header{background:#3c4757;color:#e7ebf0;}
+  .console-shell.salesforce{background:var(--blueBg);border:1px solid #bcdcff;}
+  .console-shell.salesforce .console-header{background:var(--blue);color:#fff;}
+  .console-shell.healthlake{background:var(--dark2);border:1px solid #2c4a3c;}
+  .console-shell.healthlake .console-header{background:rgba(0,0,0,.2);color:var(--mint);}
+  .console-shell.tiss{background:#f5f3ff;border:1px solid #ddd6fe;}
+  .console-shell.tiss .console-header{background:#5b21b6;color:#ede9fe;}
+
+  /* payer flow diagram */
+  .flow-box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;flex:1;min-width:180px;}
+  .flow-arrow{display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--soft);padding:0 6px;}
+  .search-input{width:100%;max-width:420px;padding:9px 12px;font-size:13.5px;font-family:inherit;
+    border-radius:8px;outline:none;}
+  .missing-bar{padding:12px 16px;font-size:12px;border-top:1px solid rgba(0,0,0,.08);}
+  .cmp-toggle-wrap{margin-top:14px;}
+  .empty-note{padding:26px 0;text-align:center;font-size:13px;}
+
+  .cmp-table td, .cmp-table th{font-size:12px;}
+  .cmp-row-divergent{background:var(--warnBg);}
+
+  /* pipeline */
+  .pipeline-row{display:flex;align-items:center;justify-content:space-between;gap:6px;
+    background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 16px;
+    margin-bottom:22px;overflow-x:auto;}
+  .pipe-step{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;min-width:88px;}
+  .pipe-step .circle{width:32px;height:32px;border-radius:50%;border:2px solid var(--line);
+    display:flex;align-items:center;justify-content:center;color:var(--soft);background:#fff;
+    font-size:12.5px;font-weight:700;transition:.25s;}
+  .pipe-step .lbl{font-size:10.5px;font-weight:700;letter-spacing:.02em;color:var(--soft);
+    text-transform:uppercase;text-align:center;}
+  .pipe-step.active .circle{border-color:var(--mint);color:var(--mint);box-shadow:0 0 0 4px rgba(0,185,142,.14);}
+  .pipe-step.done .circle{border-color:var(--mint);background:var(--mint);color:#fff;}
+  .pipe-step.done .lbl{color:var(--ink);}
+
+  .term{border-radius:14px;background:var(--dark2);border:1px solid #2c4a3c;padding:14px;
+    height:400px;overflow-y:auto;}
+  .term-line{font-family:"SFMono-Regular",ui-monospace,Consolas,monospace;font-size:12px;
+    line-height:1.7;}
+  .cursor-blink{display:inline-block;width:7px;height:13px;background:var(--mint);
+    animation:blink 1s step-start infinite;vertical-align:middle;}
+  @keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+
+  /* json */
+  .json{font-family:"SFMono-Regular",ui-monospace,Consolas,monospace;font-size:12.3px;
+    line-height:1.55;white-space:pre-wrap;word-break:break-word;}
+  .jk{color:#ffa657;} .js2{color:#7ee787;} .jn{color:#79c0ff;} .jb{color:#ff7b72;} .jnull{color:#8b949e;}
+
+  /* provenance badge + drawer */
+  .prov-badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;
+    border-radius:999px;padding:2px 9px;border:1px solid;cursor:pointer;font-family:inherit;background:#fff;}
+  .prov-dot{width:6px;height:6px;border-radius:50%;}
+  #drawerOverlay{position:fixed;inset:0;z-index:200;display:none;}
+  #drawerOverlay.open{display:flex;justify-content:flex-end;}
+  .drawer-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.3);}
+  .drawer-panel{position:relative;width:100%;max-width:420px;height:100%;background:#fff;
+    box-shadow:-8px 0 24px rgba(0,0,0,.12);padding:26px;overflow-y:auto;}
+
+  /* timeline */
+  .tl-item{display:flex;gap:14px;position:relative;padding-bottom:22px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-rail{display:flex;flex-direction:column;align-items:center;}
+  .tl-dot{width:10px;height:10px;border-radius:50%;background:var(--mint);flex-shrink:0;margin-top:5px;}
+  .tl-line{width:1px;flex:1;background:var(--line);margin-top:2px;}
+
+  /* sliders */
+  input[type=range]{width:100%;accent-color:var(--mint);}
+  input[type=range].amber{accent-color:var(--amber);}
+
+  /* bars */
+  .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .bar-row .bl{flex:0 0 140px;font-size:11.5px;color:var(--muted);text-align:right;}
+  .bar-track{flex:1;height:16px;border-radius:5px;background:var(--thBg);overflow:hidden;}
+  .bar-fill{height:100%;border-radius:5px;transition:width .8s ease;}
+  .bar-val{flex:0 0 42px;font-size:11.5px;font-weight:800;color:var(--ink);}
+
+  /* presentation footer */
+  #presBar{position:fixed;left:0;right:0;bottom:0;z-index:80;background:var(--dark);color:#fff;
+    padding:12px 22px;display:none;align-items:center;justify-content:space-between;gap:12px;
+    flex-wrap:wrap;font-size:13px;box-shadow:0 -4px 16px rgba(0,0,0,.15);}
+  #presBar.show{display:flex;}
+
+  .fadein{animation:fadein .3s ease;}
+  @keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+  select,input[type=text]{font-family:inherit;}
+
+  /* ---- painel executivo (Ato 6) — mockup do produto real ---- */
+  .oc-shell{border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 12px 32px rgba(16,24,40,.08);
+    display:flex;background:#fff;}
+  .oc-sidebar{width:190px;flex-shrink:0;background:var(--dark);color:#fff;padding:18px 14px;display:flex;flex-direction:column;}
+  .oc-sidebar-logo{display:flex;align-items:center;gap:8px;padding:0 4px 18px;font-weight:800;font-size:14px;}
+  .oc-sidebar-logo svg{flex-shrink:0;}
+  .oc-nav-section{font-size:9.5px;font-weight:800;letter-spacing:.06em;color:rgba(255,255,255,.4);
+    text-transform:uppercase;margin:14px 0 6px;padding:0 8px;}
+  .oc-nav-item{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72);
+    padding:7px 8px;border-radius:8px;cursor:default;}
+  .oc-nav-item .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.55;flex-shrink:0;}
+  .oc-nav-item.active{background:rgba(255,255,255,.12);color:#fff;}
+  .oc-nav-item.active .dot{background:var(--mint);opacity:1;}
+  .oc-sidebar-user{margin-top:auto;display:flex;align-items:center;gap:8px;padding:10px 8px 2px;
+    border-top:1px solid rgba(255,255,255,.12);font-size:11.5px;}
+  .oc-avatar{width:26px;height:26px;border-radius:50%;background:var(--mint);color:var(--dark);font-weight:800;
+    font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .oc-main{flex:1;min-width:0;background:var(--bg);}
+  .oc-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:14px 18px;background:#fff;border-bottom:1px solid var(--line);}
+  .oc-topbar-pill{font-size:11px;font-weight:600;color:var(--soft);border:1px solid var(--line);border-radius:8px;
+    padding:6px 10px;background:#fff;white-space:nowrap;}
+  .oc-body{padding:18px;}
+  .oc-kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;}
+  .oc-kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 13px;}
+  .oc-kpi .lbl{font-size:10.5px;color:var(--soft);font-weight:600;margin-bottom:6px;}
+  .oc-kpi .val{font-size:19px;font-weight:800;color:var(--ink);}
+  .oc-kpi .delta{font-size:10.5px;font-weight:700;margin-top:3px;}
+  .oc-kpi .delta.up{color:var(--mintDim);} .oc-kpi .delta.down{color:var(--danger);}
+  .oc-row2{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-bottom:12px;}
+  .oc-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+  .oc-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .oc-card h4{font-size:12.5px;font-weight:750;color:var(--ink);margin:0 0 10px;}
+  .oc-legend{display:flex;flex-direction:column;gap:6px;font-size:11px;}
+  .oc-legend .row{display:flex;align-items:center;gap:7px;color:var(--muted);}
+  .oc-legend .sw{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .oc-legend .row b{color:var(--ink);margin-left:auto;}
+  .oc-ring-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .oc-ring-label{font-size:10.5px;color:var(--soft);font-weight:600;text-align:center;}
+  .oc-opgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+  .oc-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;
+    padding:10px 18px;font-size:10.5px;color:var(--soft);border-top:1px solid var(--line);background:#fff;}
+</style>
+</head>
+<body>
+  <div class="watermark">Ambiente de demonstração · Dados 100% sintéticos · Nenhum dado real de paciente</div>
+  <header class="topnav"><div class="topnav-inner" id="topnavInner"></div></header>
+  <main id="app"></main>
+  <div id="presBar"></div>
+  <div id="drawerOverlay"><div class="drawer-backdrop" onclick="closeDrawer()"></div><div class="drawer-panel" id="drawerPanel"></div></div>
+
+<script>
+/* ============================================================
+   DADOS SINTÉTICOS — Paciente protagonista: Maria de Almeida
+   ============================================================ */
+const TASY_MARIA = { MRN:"4471982", NOME_PACIENTE:"ALMEIDA, MARIA S DE", DT_NASCIMENTO:"14/03/1968",
+  CPF:"312.887.440-05", SEXO:"F", CID_PRINCIPAL:"C50.9", DS_DIAGNOSTICO:"NEO MALIGNA MAMA NAO ESPECIFICADA",
+  PRESCRICAO:[{MEDICAMENTO:"PACLITAXEL 80 MG/M2",VIA:"EV",FREQ:"D1 SEMANAL",DT_INICIO:"22/06/2026"}],
+  ALERGIA:["DIPIRONA"], ATENDIMENTO:[{TIPO:"AMBULATORIAL",DT:"07/08/2026",SETOR:"ONCOLOGIA CLINICA - 4 AND"}],
+  TELEFONE:null };
+const TASY_MARIA_DUP = { MRN:"5583011", NOME_PACIENTE:"MARIA ALMEIDA", DT_NASCIMENTO:"14/03/1968", CPF:null,
+  ATENDIMENTO:[{TIPO:"PRONTO ATENDIMENTO",DT:"29/07/2026",QUEIXA:"NAUSEA E FEBRE 38.2"}] };
+const SF_MARIA = { Id:"003Ax000004Zq1XQAS", FirstName:"Maria", LastName:"Almeida", Birthdate:"1968-03-14",
+  Email:"maria.almeida@exemplo.com", MobilePhone:"+55 11 9****-2210", Canal_Preferido__c:"WhatsApp",
+  MRN_Externo__c:null, Cases:[{CaseNumber:"00042817",Subject:"Navegação oncológica — acompanhamento",Status:"Ativo",Owner:"Navegadora Ana P."}] };
+const HL_PATIENT = { resourceType:"Patient", id:"9f3c1e77-b2a4-4de1-9f0c-7a51d2c8e340",
+  identifier:[{system:"urn:oid:CNS",value:"700504812345678"}], name:[{given:["Maria"],family:"de Almeida"}], birthDate:"1968-03-14" };
+const HL_CONDITION = { resourceType:"Condition", id:"cnd-8f2a-0001", subject:{reference:"Patient/"+HL_PATIENT.id},
+  code:{coding:[{system:"urn:oid:2.16.840.1.113883.6.43.1",code:"8500/3",display:"Carcinoma ductal infiltrante"}],text:"ICD-O-3 8500/3 — sítio mama, quadrante superior externo"},
+  bodySite:"Mama, quadrante superior externo (QSE)", stage:{summary:"cT2 N1 M0 — Estágio IIB"} };
+const HL_OBS = { resourceType:"Observation", id:"obs-neutro-0805", subject:{reference:"Patient/"+HL_PATIENT.id},
+  code:{coding:[{system:"http://loinc.org",code:"26499-4",display:"Neutrófilos [#/volume] no Sangue"}]},
+  valueQuantity:{value:1.2,unit:"10*3/uL"}, effectiveDateTime:"2026-08-05", interpretation:"Abaixo do intervalo de referência (1.5–8.0)" };
+
+const GOLDEN_ID = "onc-1042";
+const GOLDEN = {
+  id:GOLDEN_ID, name:"Maria de Almeida", birthDate:"1968-03-14",
+  identifiers:[{system:"tasy",label:"MRN Tasy",value:"4471982"},{system:"salesforce",label:"Salesforce Contact Id",value:"003Ax000004Zq1XQAS"},{system:"healthlake",label:"FHIR Patient id / CNS",value:"9f3c1e77-…c8e340 · CNS 700504812345678"}],
+  diagnosis:{icd10:"C50.9",icdo3:"8500/3",display:"Carcinoma ductal infiltrante de mama",site:"Mama, quadrante superior externo (QSE)",staging:"cT2 N1 M0 — Estágio IIB"},
+  currentTreatment:"Paclitaxel 80 mg/m² EV — semanal (D1), iniciado em 22/06/2026",
+  team:["Oncologia Clínica","Enfermagem","Navegação"],
+  fields:{
+    telefone:{source:"salesforce",label:"Salesforce · há 12 min",rawField:"MobilePhone = +55 11 9****-2210",rawPath:"Contact.MobilePhone",fhirPath:"Patient.telecom"},
+    alergia:{source:"tasy",label:"Tasy · sync há 4 min",rawField:"ALERGIA = DIPIRONA",rawPath:"Tasy.ALERGIA",fhirPath:"AllergyIntolerance.code"},
+    diagnostico:{source:"tasy",label:"Tasy · sync há 4 min",rawField:"CID_PRINCIPAL = C50.9",rawPath:"Tasy.CID_PRINCIPAL",fhirPath:"Condition.code.coding{icd10}"},
+    estadiamento:{source:"healthlake",label:"HealthLake · há 4 min",rawField:"stage.summary = cT2 N1 M0 — IIB",rawPath:"HealthLake.Condition.stage",fhirPath:"Condition.stage"},
+    medicacao:{source:"tasy",label:"Tasy · sync há 4 min",rawField:"PACLITAXEL 80 MG/M2 · EV · D1 semanal",rawPath:"Tasy.PRESCRICAO",fhirPath:"MedicationRequest"},
+    navegacao:{source:"salesforce",label:"Salesforce · há 12 min",rawField:"Case 00042817 · Ativo · Ana P.",rawPath:"Contact.Cases",fhirPath:"CarePlan.activity"},
+  },
+  timeline:[
+    {id:"tl-1",date:"2026-03-25",label:"Diagnóstico",detail:"CID C50.9 registrado no episódio ambulatorial.",prov:{source:"tasy",label:"Tasy · sync há 4 min",rawField:"DS_DIAGNOSTICO = NEO MALIGNA MAMA NAO ESPECIFICADA",rawPath:"Tasy.PRONTUARIO.DS_DIAGNOSTICO",fhirPath:"Condition.code.text"}},
+    {id:"tl-2",date:"2026-04-02",label:"Biópsia",detail:"Biópsia de fragmento — QSE mama esquerda.",prov:{source:"healthlake",label:"HealthLake · há 4 min",rawField:"DiagnosticReport.conclusion",rawPath:"HealthLake.DiagnosticReport",fhirPath:"DiagnosticReport.conclusion"}},
+    {id:"tl-3",date:"2026-04-18",label:"Estadiamento",detail:"cT2 N1 M0 — Estágio IIB.",prov:{source:"healthlake",label:"HealthLake · há 4 min",rawField:"stage.summary = cT2 N1 M0 — IIB",rawPath:"HealthLake.Condition.stage",fhirPath:"Condition.stage.summary"}},
+    {id:"tl-4",date:"2026-06-22",label:"Início do tratamento",detail:"Paclitaxel 80 mg/m² EV, esquema semanal D1.",prov:{source:"tasy",label:"Tasy · sync há 4 min",rawField:"PRESCRICAO.MEDICAMENTO = PACLITAXEL 80 MG/M2",rawPath:"Tasy.PRESCRICAO",fhirPath:"MedicationRequest.medicationCodeableConcept"}},
+    {id:"tl-5",date:"2026-07-29",label:"Atendimento no Pronto Atendimento",detail:"Náusea e febre 38,2 °C — registro duplicado detectado no Tasy (MRN 5583011).",prov:{source:"tasy",label:"Tasy · sync há 4 min",rawField:"QUEIXA = NAUSEA E FEBRE 38.2",rawPath:"Tasy(MRN 5583011).ATENDIMENTO",fhirPath:"Encounter.reasonCode"}},
+    {id:"tl-6",date:"2026-08-05",label:"Exame externo incorporado",detail:"Neutrófilos 1,2 10³/µL — abaixo do intervalo de referência.",prov:{source:"healthlake",label:"HealthLake · há 4 min",rawField:"valueQuantity = 1.2 10*3/uL",rawPath:"HealthLake.Observation(26499-4)",fhirPath:"Observation.valueQuantity"}},
+    {id:"tl-7",date:"2026-08-06",label:"PRO reportado (check-in ESAS)",detail:"Paciente relatou febre no check-in do app um dia antes da quimio.",prov:{source:"oncolife",label:"Oncolife Care · paciente relatado",rawField:"ESAS check-in",rawPath:"App.Checkin",fhirPath:"Observation.component"}},
+    {id:"tl-8",date:"2026-08-07",label:"Consulta de acompanhamento",detail:"Consulta ambulatorial — Oncologia Clínica, 4º andar.",prov:{source:"tasy",label:"Tasy · sync há 4 min",rawField:"ATENDIMENTO.SETOR = ONCOLOGIA CLINICA - 4 AND",rawPath:"Tasy.ATENDIMENTO",fhirPath:"Encounter.location"}},
+  ],
+  insight:"Neutrófilos 1.2 (05/08) · quimio agendada 10/08 · paciente relatou febre no check-in de ontem. Nenhum sistema isolado cruzaria os três sinais."
+};
+
+const MARIA_MPI_CONFLICT = { id:"mpi-0001", patientA:"ALMEIDA, MARIA S DE (Tasy MRN 4471982)", patientB:"MARIA ALMEIDA (Tasy MRN 5583011)",
+  score:0.87, reason:"Nome + data de nascimento coincidem; CPF ausente no registro do Pronto Atendimento.",
+  detail:"Registro criado no Pronto Atendimento em 29/07/2026 sem captura de CPF. Nome abreviado e ausência de identificador comum reduzem a confiança automática do match para 0.87 — abaixo do limiar de auto-merge (0.95), por isso foi enviado para revisão humana." };
+const MARIA_MPI_CONFIRMED = { label:"Tasy 4471982 = Salesforce 003Ax000004Zq1XQAS = FHIR 9f3c1e77", score:0.99 };
+
+const MAPPING_ROWS = [
+  {id:"m1",src:"tasy",field:"NOME_PACIENTE",val:"ALMEIDA, MARIA S DE",res:"Patient",path:"Patient.name[0]",fhirVal:'{ "given": ["Maria"], "family": "de Almeida" }',note:"Nome reordenado a partir do padrão SOBRENOME, NOME do HIS."},
+  {id:"m2",src:"tasy",field:"DT_NASCIMENTO",val:"14/03/1968",res:"Patient",path:"Patient.birthDate",fhirVal:"1968-03-14",note:"DD/MM/AAAA → ISO 8601."},
+  {id:"m3",src:"tasy",field:"CID_PRINCIPAL",val:"C50.9",res:"Condition",path:"Condition.code.coding[icd-10]",fhirVal:'{ "system": "ICD-10-CM", "code": "C50.9" }'},
+  {id:"m4",src:"healthlake",field:"Condition.code (ICD-O-3)",val:"8500/3",res:"Condition",path:"Condition.code.coding[icd-o-3] · mCODE PrimaryCancerCondition",fhirVal:'{ "system": "ICD-O-3", "code": "8500/3" }',note:"CID-10 (Tasy) e ICD-O-3 (HealthLake) coexistem no mesmo Condition."},
+  {id:"m5",src:"healthlake",field:"stage.summary",val:"cT2 N1 M0 — IIB",res:"Condition",path:"Condition.stage · mCODE TNMStageGroup",fhirVal:'{ "summary": "cT2 N1 M0", "stageGroup": "IIB" }'},
+  {id:"m6",src:"tasy",field:"PRESCRICAO.MEDICAMENTO",val:"PACLITAXEL 80 MG/M2 · EV · D1 SEMANAL",res:"MedicationRequest",path:"medicationCodeableConcept / dosageInstruction",fhirVal:'{ "text": "Paclitaxel 80mg/m² EV", "timing": "weekly D1" }'},
+  {id:"m7",src:"healthlake",field:"Observation (26499-4)",val:"1.2 10*3/uL — 2026-08-05",res:"Observation",path:"code(LOINC 26499-4) / valueQuantity",fhirVal:'{ "value": 1.2, "unit": "10*3/uL", "interpretation": "L" }'},
+  {id:"m8",src:"salesforce",field:"MobilePhone / Canal_Preferido__c",val:"+55 11 9****-2210 · WhatsApp",res:"Patient",path:"Patient.telecom / extension(canal-preferido)",fhirVal:'{ "system": "phone", "use": "mobile" }'},
+  {id:"m9",src:"salesforce",field:"Cases[0]",val:"00042817 · Navegação oncológica · Ativo",res:"CarePlan",path:"CarePlan.activity",fhirVal:'{ "status": "in-progress", "performer": "Ana P." }'},
+  {id:"m10",src:"tasy",field:"ALERGIA",val:"DIPIRONA",res:"AllergyIntolerance",path:"AllergyIntolerance.code",fhirVal:'{ "text": "Dipirona" }'},
+];
+
+/* ---- gerador determinístico (mulberry32) ---- */
+function mulberry32(seed){let a=seed>>>0;return function(){a|=0;a=(a+0x6d2b79f5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
+function pick(rng,arr){return arr[Math.floor(rng()*arr.length)];}
+function range(rng,min,max){return Math.floor(min+rng()*(max-min+1));}
+function weightedPick(rng,items,weights){const r=rng();let acc=0;for(let i=0;i<items.length;i++){acc+=weights[i];if(r<=acc)return items[i];}return items[items.length-1];}
+
+const FIRST_NAMES=["Ana","Beatriz","Carlos","Daniela","Eduardo","Fernanda","Gabriel","Helena","Igor","Juliana","Lucas","Mariana","Nathalia","Otávio","Patrícia","Rafael","Sandra","Tiago","Valentina","Wagner"];
+const LAST_NAMES=["Silva","Souza","Oliveira","Santos","Pereira","Costa","Rodrigues","Almeida","Nascimento","Lima","Araújo","Ferreira","Barbosa","Ribeiro","Martins"];
+const CONFLICT_REASONS=["Nome + data de nascimento coincidem; CPF ausente em um dos registros.","Mesmo CPF, grafia de nome divergente entre sistemas.","Data de nascimento com formatos distintos (DD/MM/AAAA vs ISO 8601) gerou baixa confiança.","Telefone comum, nome parcialmente divergente (nome social vs nome civil).","Registro criado no Pronto Atendimento sem identificador nacional (CNS)."];
+
+function buildMpiConflicts(total){
+  const rng=mulberry32(43); const out=[Object.assign({status:"pendente"},MARIA_MPI_CONFLICT)];
+  const systems=["tasy","salesforce","healthlake"];
+  for(let i=1;i<total;i++){
+    const fn=pick(rng,FIRST_NAMES), ln1=pick(rng,LAST_NAMES), ln2=pick(rng,LAST_NAMES);
+    const sysA=pick(rng,systems); let sysB=pick(rng,systems); if(sysB===sysA) sysB=systems[(systems.indexOf(sysA)+1)%systems.length];
+    out.push({id:"mpi-"+String(i+1).padStart(4,"0"),patientA:fn+" "+ln1,patientB:fn+" "+(ln2===ln1?ln1+" "+pick(rng,LAST_NAMES):ln2),
+      systemA:sysA,systemB:sysB,score:Math.round((0.72+rng()*0.22)*100)/100,reason:pick(rng,CONFLICT_REASONS),status:"pendente"});
+  }
+  return out;
+}
+const MPI_CONFLICTS = buildMpiConflicts(154);
+
+const MAPPING_ERROR_SEED=[
+  {resource:"Condition",field:"code.coding",source:"tasy",message:"CID-10 sem correspondência direta em ICD-O-3 — revisão manual de oncologista necessária."},
+  {resource:"MedicationRequest",field:"dosageInstruction",source:"tasy",message:"Frequência 'D1 SEMANAL' fora do padrão FHIR Timing — normalização parcial."},
+  {resource:"Observation",field:"referenceRange",source:"healthlake",message:"Intervalo de referência do LIS não informado — usado padrão do LOINC."},
+  {resource:"Patient",field:"telecom",source:"salesforce",message:"Telefone mascarado (LGPD) impede validação de formato E.164 completa."},
+  {resource:"Encounter",field:"reasonCode",source:"tasy",message:"Queixa em texto livre sem mapeamento SNOMED CT automático."},
+  {resource:"Condition",field:"bodySite",source:"healthlake",message:"Lateralidade da lesão não especificada no registro de origem."},
+  {resource:"CarePlan",field:"activity",source:"salesforce",message:"Status de caso 'Ativo' sem data de início — inferido pela data de criação."},
+];
+function buildMappingErrors(total){const out=[];for(let i=0;i<total;i++){out.push(Object.assign({id:"err-"+String(i+1).padStart(3,"0")},MAPPING_ERROR_SEED[i%MAPPING_ERROR_SEED.length]));}return out;}
+const MAPPING_ERRORS = buildMappingErrors(37);
+
+const SITES=["Mama","Próstata","Colorretal","Pulmão","Hematológica","Outro"]; const SITE_W=[0.27,0.19,0.16,0.14,0.14,0.10];
+const STAGES=["Estágio 0","Estágio I","Estágio II","Estágio III","Estágio IV"];
+const JOURNEY=["Diagnóstico","Estadiamento","Tratamento ativo","Vigilância","Sobrevivência"]; const JOURNEY_W=[0.09,0.11,0.52,0.2,0.08];
+function buildCohort(size){const rng=mulberry32(42);const out=[];for(let i=0;i<size;i++){
+  out.push({id:"coh-"+String(i+1).padStart(5,"0"),name:pick(rng,FIRST_NAMES)+" "+pick(rng,LAST_NAMES),
+    site:weightedPick(rng,SITES,SITE_W),stage:pick(rng,STAGES),journeyStatus:weightedPick(rng,JOURNEY,JOURNEY_W),
+    completeness:range(rng,71,99),requiresAttention:rng()<0.068,hasGap:rng()<0.033});}
+  return out;}
+const COHORT = buildCohort(4800);
+
+const AUDIT_ACTIONS=["read","write","read","read","export"]; const ACTION_LABEL={read:"leitura",write:"escrita",consent_revoke:"consentimento revogado",consent_grant:"consentimento concedido",tenant_switch:"troca de tenant",export:"exportação"};
+const AUDIT_USERS=["dra.fernanda.melo","enf.joao.paiva","nav.ana.paiva","svc.oncolife.sync","adm.ti.hospital"];
+const AUDIT_RESOURCES=["Patient/onc-1042","Observation/obs-neutro-0805","Condition/cnd-8f2a-0001","MedicationRequest","CarePlan/cp-0042817","Bundle/export-painel"];
+function buildAuditLog(total){const rng=mulberry32(45);const out=[];const base=new Date("2026-08-10T11:20:00-03:00").getTime();
+  for(let i=0;i<total;i++){const ts=new Date(base-i*range(rng,3,40)*60000);
+    out.push({id:"aud-"+String(i+1).padStart(4,"0"),timestamp:ts.toISOString(),user:pick(rng,AUDIT_USERS),resource:pick(rng,AUDIT_RESOURCES),action:pick(rng,AUDIT_ACTIONS),tenant:"hospital-parceiro"});}
+  out.unshift({id:"aud-gov-2",timestamp:new Date(base-2*60000).toISOString(),user:"adm.ti.hospital",resource:"Tenant/hospital-b",action:"tenant_switch",tenant:"hospital-b"},
+    {id:"aud-gov-1",timestamp:new Date(base-1*60000).toISOString(),user:"dra.fernanda.melo",resource:"Patient/onc-1042",action:"consent_revoke",tenant:"hospital-parceiro"});
+  return out;}
+const AUDIT_LOG = buildAuditLog(60);
+
+const HUB_METRICS={tasyRecordsRead:4812,salesforceContacts:4402,salesforceCases:1917,healthlakePatients:3960,healthlakeObs:18442,
+  mpiMatchRatePct:96.8,mpiConflicts:154,mappingErrors:37,avgSyncLatencyMs:312,tenantPatientCount:4798,
+  activePatients:1284,requireAttention:87,journeysWithGaps:42,overallCompletenessPct:91,symptomsReported:63};
+
+const PROGRAM_GATES=[{key:"owners",label:"Definição de owners",baselineDay:7},{key:"inventario",label:"Inventário de dados",baselineDay:14},
+  {key:"sandbox",label:"Sandbox de integração",baselineDay:30},{key:"documentacao",label:"Documentação técnica",baselineDay:45},
+  {key:"dpa",label:"DPA / acordo de dados",baselineDay:60},{key:"producao",label:"Produção",baselineDay:120},{key:"escrita",label:"Write-back em produção",baselineDay:150}];
+const PROGRAM_START="2026-06-15";
+
+/* ============================================================
+   REALIDADE DO SETUP — programa de integração de 6 meses
+   (linguagem alinhada ao documento de capacidade técnica do time)
+   ============================================================ */
+const SETUP_FASES=[
+  {n:0,label:"Discovery & alinhamento",quando:"Mês 1 · semanas 1–3",desc:"Mapear sistemas (Tasy, Salesforce, HealthLake…), stakeholders, escopo oncológico, LGPD, critérios de sucesso e backlog de conectores a desenvolver."},
+  {n:1,label:"Tenant, segurança & contrato de dados",quando:"Mês 1 · semanas 2–4",desc:"Tenant isolado, papéis, SSO/IAM, auditoria. Contrato de dados (Resources, IDs, frequência). DPA / consentimento em tramitação."},
+  {n:2,label:"Abertura de acessos (hospital) + sandbox",quando:"Mês 1–2 · gate hospital",desc:"Hospital libera ambientes de teste, autenticação e documentação de APIs/views. Oncolife valida conectividade e amostra de payloads."},
+  {n:3,label:"Desenvolvimento — conectores de leitura",quando:"Mês 2–4 · desenvolvimento",desc:"Engenharia dos conectores Tasy / HealthLake / Salesforce (priorizados): ingestão, normalização FHIR, MPI, retries, logs. Homologação técnica em sandbox."},
+  {n:4,label:"Produto ligado aos dados + validação clínica",quando:"Mês 3–5",desc:"App com ficha, medicações, agenda e régua alimentadas pelas integrações. Validação clínica da qualidade dos dados com a oncologia."},
+  {n:5,label:"Piloto clínico com coorte real",quando:"Mês 4–6",desc:"Pacientes convidados, operação assistida, monitoramento de sync, ajustes de mapeamento e UX. Acesso de produção liberado pelo hospital."},
+  {n:6,label:"Write-back, inteligência & handoff",quando:"Mês 5–6 · fechamento",desc:"Desenvolvimento do write-back (Observation/Communication/SOS), painéis, runbook operacional e decisão de go/no-go para escala."},
+];
+const SETUP_RACI=[
+  {atividade:"Inventário de sistemas e APIs",oncolife:"R",ti:"A/C",oncologia:"C",juridico:"I"},
+  {atividade:"Liberação de sandbox / produção e escopos no prazo",oncolife:"C",ti:"R/A",oncologia:"I",juridico:"C"},
+  {atividade:"Desenvolvimento dos conectores (código, testes, deploys)",oncolife:"R/A",ti:"C",oncologia:"I",juridico:"I"},
+  {atividade:"Validação clínica dos dados",oncolife:"C",ti:"C",oncologia:"R/A",juridico:"I"},
+  {atividade:"Consentimento / DPA / LGPD",oncolife:"C",ti:"C",oncologia:"I",juridico:"R/A"},
+  {atividade:"Piloto com pacientes reais",oncolife:"R",ti:"C",oncologia:"A",juridico:"C"},
+];
+const SETUP_SISTEMAS=[
+  {papel:"HIS / Prontuário eletrônico",exemplo:"Tasy, MV, ou outro HIS do hospital"},
+  {papel:"CRM / Relacionamento",exemplo:"Salesforce, ou outro CRM"},
+  {papel:"Datastore FHIR",exemplo:"AWS HealthLake, ou outro datastore FHIR"},
+  {papel:"Laboratório (LIS)",exemplo:"Resultados de exames laboratoriais"},
+  {papel:"Imagem (PACS)",exemplo:"Laudos e metadados de exames de imagem"},
+  {papel:"Agenda / Ambulatório",exemplo:"Consultas, sessões e confirmações"},
+  {papel:"Outros sistemas internos",exemplo:"Protocolos, navegação, bases oncológicas específicas"},
+];
+const SETUP_CHECKLIST=[
+  {item:"Canal de acesso preferencial (HealthLake direto, Tasy API, SMART on FHIR ou combinação)",prazo:"definido no kickoff"},
+  {item:"Ambiente sandbox com pacientes/casos sintéticos (Tasy + Salesforce)",prazo:"até D30"},
+  {item:"Inventário oficial: módulos Tasy, orgs Salesforce, outros sistemas oncológicos",prazo:"até D14"},
+  {item:"Dicionário de identificadores (MRN, CPF, CNS, Salesforce Contact Id)",prazo:"até D45"},
+  {item:"DPA / fluxo de consentimento LGPD aprovados",prazo:"até D60"},
+  {item:"Acesso de produção (leitura) para a coorte acordada",prazo:"até D120"},
+  {item:"Janela de 6 meses com squad conjunto (ritmo semanal) e suporte TI contínuo",prazo:"todo o programa"},
+];
+
+const SYNC_LOG=[
+  {t:"00.12",text:"conector:tasy        → autenticado (OAuth2, escopo leitura)",tone:"info",delay:260},
+  {t:"00.34",text:"conector:tasy        → 4.812 registros lidos · 3 páginas",tone:"ok",delay:340},
+  {t:"00.61",text:"conector:salesforce  → 4.402 contatos · 1.917 cases",tone:"ok",delay:320},
+  {t:"00.88",text:"conector:healthlake  → 3.960 Patient · 18.442 Observation",tone:"ok",delay:300},
+  {t:"01.20",text:"mpi                  → correlacionando identidades…",tone:"info",delay:380},
+  {t:"01.44",text:"mpi   ⚠ MATCH 0.87   → Tasy 5583011 ≈ Tasy 4471982 (nome+DN, CPF ausente) → fila de revisão",tone:"warn",delay:260},
+  {t:"01.51",text:"mpi   ✓ MATCH 0.99   → Tasy 4471982 = SF 003Ax000004Zq1XQAS = FHIR 9f3c1e77",tone:"ok",delay:340},
+  {t:"01.90",text:"normalize            → CID C50.9 → mCODE PrimaryCancerCondition",tone:"info",delay:400},
+  {t:"02.10",text:"validate ✗ 37 erros  → enviados para a fila de conflitos",tone:"err",delay:300},
+  {t:"02.40",text:"load                 → 4.798 pacientes no tenant hospital-parceiro",tone:"ok",delay:320},
+];
+const TONE_COLOR={ok:"#7ee787",warn:"#ffd77a",err:"#ff9d8a",info:"#9fb8d1"};
+
+/* ============================================================
+   ATO 7 — OPERADORAS DE SAÚDE (FASE 2 DO MODELO DE NEGÓCIO)
+   ============================================================ */
+const PAYER_METRICS = {
+  carteiraVidas: 10000,
+  mlrAtualPct: 81.7,
+  pctOperadorasPrejuizo: 44,
+  perdaFraudeIneficienciaBi: 22.5,
+  pmpmReais: 4.50,
+  setupPayerReais: 80000,
+  arrReferenciaReais: 540000,
+  premioIlustrativoMi: 50,
+};
+
+const TISS_CLAIMS_SAMPLE = [
+  {numero:"TISS-2026-08-11-00449",beneficiario:"C. F. OLIVEIRA",procedimento:"Quimioterapia — protocolo FOLFOX",data:"11/08/2026",valor:"R$ 9.200"},
+  {numero:"TISS-2026-08-11-00452",beneficiario:"MARIA S DE ALMEIDA",procedimento:"Quimioterapia — Paclitaxel 80mg/m² EV",data:"11/08/2026",valor:"R$ 18.400"},
+  {numero:"TISS-2026-08-10-00301",beneficiario:"W. A. PEREIRA",procedimento:"Radioterapia — IMRT, sessão 14/25",data:"10/08/2026",valor:"R$ 4.750"},
+  {numero:"TISS-2026-08-09-00118",beneficiario:"J. R. NASCIMENTO",procedimento:"Ressonância magnética — abdome total",data:"09/08/2026",valor:"R$ 2.150"},
+];
+const TISS_CLAIM_MARIA={numero:"TISS-2026-08-11-00452",beneficiario:"MARIA S DE ALMEIDA",carteirinha:"0034 5591 2207",
+  procedimento:"Quimioterapia — Paclitaxel 80mg/m² EV",codigoTuss:"40103012",valor:"R$ 18.400",data:"11/08/2026"};
+const TISS_CLAIM_CONTROL={numero:"TISS-2026-08-09-00118",beneficiario:"J. R. NASCIMENTO",carteirinha:"0034 2287 9910",
+  procedimento:"Ressonância magnética — abdome total (2ª solicitação em 9 dias)",codigoTuss:"41202016",valor:"R$ 2.150",data:"09/08/2026"};
+
+function buildCarteiraRisco(){
+  const rng=mulberry32(46);
+  return COHORT.map(p=>{const r=rng();const riskBucket=r<0.09?"alto":r<0.32?"medio":"baixo";return Object.assign({},p,{riskBucket});});
+}
+const CARTEIRA_RISCO = buildCarteiraRisco();
+const RISK_LABEL={alto:"Alto risco (90 dias)",medio:"Risco médio",baixo:"Risco baixo"};
+const RISK_COLOR={alto:"var(--danger)",medio:"var(--amber)",baixo:"var(--mintDim)"};
+
+/* ============================================================
+   ESTADO (persistido em localStorage)
+   ============================================================ */
+const STORAGE_KEY="oncolife-hub-demo-v1";
+const DEFAULT_STATE={presentationMode:false,presentationStartedAt:null,syncRunId:0,syncHasRun:false,
+  mpiResolutions:{},checkins:[],tasyInboxDelivered:false,sosTriggeredAt:null,consentRevoked:false,
+  tenant:"hospital-parceiro",gateOffsets:Object.fromEntries(PROGRAM_GATES.map(g=>[g.key,0]))};
+let STATE = loadState();
+function loadState(){try{const raw=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");return Object.assign({},DEFAULT_STATE,raw,{gateOffsets:Object.assign({},DEFAULT_STATE.gateOffsets,raw.gateOffsets||{})});}catch(e){return JSON.parse(JSON.stringify(DEFAULT_STATE));}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(STATE));}catch(e){}}
+function setState(patch){Object.assign(STATE,patch);saveState();}
+function resetAll(){STATE=JSON.parse(JSON.stringify(DEFAULT_STATE));saveState();goTo("home");}
+
+/* ============================================================
+   ROTEAMENTO
+   ============================================================ */
+const SEQUENCE=[
+  {id:"home",label:"Capa",ato:1},{id:"tasy",label:"Tasy",ato:1},{id:"salesforce",label:"Salesforce",ato:1},{id:"healthlake",label:"HealthLake",ato:1},
+  {id:"sync",label:"Sincronização",ato:2},{id:"setup",label:"Setup real (6 meses)",ato:2},{id:"mpi",label:"MPI",ato:2},{id:"mapeamento",label:"Mapeamento",ato:2},
+  {id:"paciente",label:"Visão 360°",ato:3},{id:"apiconsole",label:"Console FHIR",ato:4},{id:"writeback",label:"Write-back",ato:5},
+  {id:"painel",label:"Painel",ato:6},{id:"governanca",label:"Governança",ato:6},{id:"prazos",label:"Prazos",ato:6},
+  {id:"opproblema",label:"O problema do pagador",ato:7},{id:"oprede",label:"Efeito de rede",ato:7},
+  {id:"opcarteira",label:"Carteira de risco",ato:7},{id:"opauditoria",label:"Auditoria de sinistro",ato:7},{id:"opsimulador",label:"Simulador de MLR",ato:7},
+];
+const ATOS=[
+  {n:1,label:"Os três consoles",min:3,obj:"Mostrar a mesma paciente, três respostas diferentes e incompletas.",home:"tasy"},
+  {n:2,label:"Motor de sincronização",min:5,obj:"Mostrar a transformação acontecendo: ingestão, MPI, normalização, validação.",home:"sync"},
+  {n:3,label:"Visão 360° com proveniência",min:4,obj:"Uma verdade única, com prova de origem em cada campo.",home:"paciente"},
+  {n:4,label:"Console FHIR",min:3,obj:"Acesso padronizado — a mesma query funciona para qualquer fonte.",home:"apiconsole"},
+  {n:5,label:"Write-back",min:2,obj:"O ciclo se fecha: o paciente relata, o hospital recebe de volta.",home:"writeback"},
+  {n:6,label:"Painéis, governança e prazos",min:1,obj:"Escala, qualidade, LGPD e o cronograma do programa.",home:"painel"},
+  {n:7,label:"Operadoras de Saúde (Fase 2)",min:5,obj:"O mesmo dado clínico que protege o hospital também reduz a sinistralidade da operadora.",home:"opproblema"},
+];
+let currentIndex=0;
+function goTo(id){const idx=SEQUENCE.findIndex(s=>s.id===id);currentIndex=idx>=0?idx:0;location.hash=SEQUENCE[currentIndex].id;render();window.scrollTo({top:0,behavior:"instant"});}
+window.addEventListener("hashchange",()=>{const id=(location.hash||"#home").slice(1);const idx=SEQUENCE.findIndex(s=>s.id===id);currentIndex=idx>=0?idx:0;render();});
+
+document.addEventListener("keydown",(e)=>{
+  if(e.key==="Escape"){const ov=document.getElementById("drawerOverlay"); if(ov&&ov.classList.contains("open")){closeDrawer();e.preventDefault();return;}}
+  const tag=(e.target&&e.target.tagName)||""; if(["INPUT","TEXTAREA","SELECT"].includes(tag)) return;
+  const drawerOpen=document.getElementById("drawerOverlay")&&document.getElementById("drawerOverlay").classList.contains("open");
+  if(drawerOpen) return;
+  if(e.key==="ArrowRight"){currentIndex=Math.min(currentIndex+1,SEQUENCE.length-1);goTo(SEQUENCE[currentIndex].id);e.preventDefault();}
+  else if(e.key==="ArrowLeft"){currentIndex=Math.max(currentIndex-1,0);goTo(SEQUENCE[currentIndex].id);e.preventDefault();}
+  else if(e.key.toLowerCase()==="p"){togglePresentation();}
+  else if(e.key.toLowerCase()==="r"){resetAll();}
+});
+
+function togglePresentation(){
+  const on=!STATE.presentationMode;
+  setState({presentationMode:on,presentationStartedAt:on?Date.now():null});
+  render();
+}
+let presTimer=null;
+function renderPresBar(){
+  const bar=document.getElementById("presBar");
+  if(!STATE.presentationMode){bar.classList.remove("show");bar.innerHTML="";if(presTimer)clearInterval(presTimer);return;}
+  bar.classList.add("show");
+  const ato=ATOS.find(a=>a.n===SEQUENCE[currentIndex].ato);
+  function paint(){
+    const elapsed=Math.floor((Date.now()-(STATE.presentationStartedAt||Date.now()))/1000);
+    const mm=String(Math.floor(elapsed/60)).padStart(2,"0"), ss=String(elapsed%60).padStart(2,"0");
+    bar.innerHTML=`<div><span class="tag dark">Ato ${ato.n} · alvo ${ato.min} min</span> <span style="opacity:.8;margin-left:8px;">${ato.obj}</span></div>
+      <div style="display:flex;align-items:center;gap:16px;" class="tabular"><span>${mm}:${ss}</span><span style="opacity:.6;">P para sair · ← → navega · R reseta</span></div>`;
+  }
+  paint(); if(presTimer)clearInterval(presTimer); presTimer=setInterval(paint,1000);
+}
+
+/* ============================================================
+   TOP NAV
+   ============================================================ */
+function renderTopNav(){
+  const current=SEQUENCE[currentIndex].ato;
+  document.getElementById("topnavInner").innerHTML = STATE.presentationMode ? "" : `
+    <button class="brand" onclick="goTo('home')"><img src="data:image/png;base64,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" alt="Oncolife Care" style="height:26px;display:block;"></button>
+    <nav class="ato-nav">${ATOS.map(a=>`
+      <button class="ato-btn ${a.n===current?"active":""}" onclick="goTo('${a.home}')">
+        <span class="ato-dot">${a.n}</span><span>${a.label}</span>
+      </button>`).join("")}</nav>
+    <button class="pres-btn" onclick="togglePresentation()">Modo apresentação</button>`;
+}
+
+/* ============================================================
+   HELPERS DE UI
+   ============================================================ */
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function jsonView(data){
+  const json=esc(JSON.stringify(data,null,2));
+  const highlighted=json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,(m)=>{
+    let cls="jn"; if(/^"/.test(m)){cls=/:$/.test(m)?"js2":"jk";} else if(/true|false/.test(m)){cls="jb";} else if(/null/.test(m)){cls="jnull";}
+    return `<span class="${cls}">${m}</span>`;
+  });
+  return `<pre class="json">${highlighted}</pre>`;
+}
+let PROV_REG=[];
+function provBadge(tag){
+  const SRC_COLOR={tasy:"#667085",salesforce:"#1570EF",healthlake:"#18362B",oncolife:"#00B98E"};
+  const idx=PROV_REG.length; PROV_REG.push(tag);
+  const c=SRC_COLOR[tag.source]||"#667085";
+  return `<button class="prov-badge" style="border-color:${c}55;color:${c};background:${c}12" onclick="openDrawer(${idx})"><span class="prov-dot" style="background:${c}"></span>${esc(tag.label)}</button>`;
+}
+function openDrawer(idx){
+  const tag=PROV_REG[idx]; if(!tag) return;
+  const SRC_LABEL={tasy:"Tasy",salesforce:"Salesforce",healthlake:"HealthLake",oncolife:"Oncolife Care"};
+  document.getElementById("drawerPanel").innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <span class="tag">${SRC_LABEL[tag.source]}</span>
+      <button onclick="closeDrawer()" style="background:none;border:none;font-size:22px;line-height:1;cursor:pointer;color:var(--soft);">×</button>
+    </div>
+    <h3 style="font-size:16px;color:var(--dark);margin-bottom:4px;">Proveniência do campo</h3>
+    <p style="font-size:12.5px;color:var(--soft);margin-bottom:20px;">${esc(tag.label)}</p>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;text-transform:uppercase;color:var(--soft);margin-bottom:4px;">Campo bruto na origem</div>
+      <div style="border:1px solid var(--line);background:var(--thBg);border-radius:8px;padding:9px 12px;font-size:12.5px;font-family:monospace;word-break:break-word;">${esc(tag.rawField)}</div>
+      <div style="font-size:11px;color:var(--soft);margin-top:4px;">Caminho: ${esc(tag.rawPath)}</div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:var(--mintDim);margin:12px 0;">↓ normalizado para</div>
+    <div>
+      <div style="font-size:11px;text-transform:uppercase;color:var(--soft);margin-bottom:4px;">Caminho FHIR de destino</div>
+      <div style="border:1px solid var(--line);background:var(--light);border-radius:8px;padding:9px 12px;font-size:12.5px;font-family:monospace;color:var(--mintDim);word-break:break-word;">${esc(tag.fhirPath)}</div>
+    </div>`;
+  document.getElementById("drawerOverlay").classList.add("open");
+}
+function closeDrawer(){document.getElementById("drawerOverlay").classList.remove("open");}
+
+function kpi(label,val,tone){return `<div class="kpi"><div class="lbl">${esc(label)}</div><div class="val ${tone||""}">${esc(val)}</div></div>`;}
+function barList(title,rows,color){
+  const max=Math.max.apply(null,rows.map(r=>r.value));
+  return `<div class="card"><h2>${esc(title)}</h2><div style="margin-top:14px;">${rows.map(r=>`
+    <div class="bar-row"><div class="bl">${esc(r.label)}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${(r.value/max*100)}%;background:${color}"></div></div>
+    <div class="bar-val">${r.value}${r.suffix||""}</div></div>`).join("")}</div></div>`;
+}
+function fmtDateBR(iso){const d=new Date(iso+"T12:00:00");return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short"}).replace(".","");}
+function fmtFullDateBR(d){return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"long",year:"numeric"});}
+function addDays(baseIso,days){const d=new Date(baseIso+"T00:00:00");d.setDate(d.getDate()+days);return d;}
+
+/* ============================================================
+   TELAS
+   ============================================================ */
+function screenHome(){
+  return `
+  <div class="hero" style="margin:-32px -20px 0;border-radius:0;">
+    <span class="chip">Oncolife Care × Hospital Parceiro</span>
+    <h1>Um paciente. Três sistemas. Uma verdade.</h1>
+    <p>Demonstração navegável de como o Hub de Interoperabilidade Oncológica normaliza dados de sistemas como Tasy, Salesforce
+      e AWS HealthLake em FHIR R4 + mCODE — e devolve acesso padronizado, sem substituir nenhum sistema do hospital.</p>
+    <button class="hero-cta" onclick="goTo('tasy')">Iniciar apresentação →</button>
+    <p style="color:rgba(255,255,255,.5);font-size:12px;margin-top:18px;">Atalhos: <kbd class="chip">←</kbd> <kbd class="chip">→</kbd> navegam · <kbd class="chip">P</kbd> modo apresentação · <kbd class="chip">R</kbd> reseta a demo</p>
+  </div>
+  <div style="max-width:820px;margin:28px auto 0;">
+    <div class="card" style="border-color:var(--amber);background:var(--warnBg);">
+      <span class="tag amber">antes de começar</span>
+      <p style="font-size:13.5px;color:var(--ink);margin:10px 0 0;line-height:1.6;">Esta demo mostra o <b>resultado</b> depois de um programa de integração real — a conexão com os sistemas de cada hospital não vem pronta de fábrica, é construída em conjunto, com prazos e responsabilidades compartilhadas entre Oncolife e a TI do hospital.</p>
+      <button class="btn-mint-outline" style="margin-top:12px;" onclick="goTo('setup')">Ver como o Setup funciona de verdade →</button>
+    </div>
+    <div class="card" style="border-color:var(--mint);background:var(--light);margin-top:14px;">
+      <span class="tag" style="background:var(--dark);color:#fff;">sobre os sistemas mostrados</span>
+      <p style="font-size:13.5px;color:var(--ink);margin:10px 0 0;line-height:1.6;">Tasy, Salesforce e AWS HealthLake são um <b>exemplo ilustrativo</b> — nesta demo, escolhidos para mostrar o conceito com nomes reconhecíveis. O Hub se conecta a qualquer combinação de sistemas do hospital (HIS/prontuário, CRM, datastore FHIR, laboratório, imagem, agenda), seja 1 sistema, sejam 5. O número e o tipo variam por hospital — quem manda é o inventário real de cada cliente, não esta lista.</p>
+    </div>
+  </div>
+  <div style="max-width:1100px;margin:0 auto;padding-top:36px;">
+    <div style="text-align:center;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);margin-bottom:22px;">Os ${ATOS.length} atos</div>
+    <div class="grid grid-3">
+      ${ATOS.map(a=>`<div class="card" style="cursor:pointer;" onclick="goTo('${a.home}')">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="width:26px;height:26px;border-radius:50%;background:var(--light);color:var(--mintDim);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;">${a.n}</span>
+          <h2>${a.label}</h2>
+        </div>
+        <p style="color:var(--muted);font-size:12.5px;line-height:1.5;margin:0 0 10px;">${a.obj}</p>
+        <span class="tag amber">alvo: ${a.min} min</span>
+      </div>`).join("")}
+    </div>
+  </div>`;
+}
+
+/* ---- ATO 1: consoles ---- */
+let cmpVisible={tasy:false,salesforce:false,healthlake:false};
+let queryState={tasy:"Maria Almeida",salesforce:"Maria Almeida",healthlake:"Maria Almeida"};
+
+function comparisonTable(){
+  const rows=[
+    ["Nome",TASY_MARIA.NOME_PACIENTE,SF_MARIA.FirstName+" "+SF_MARIA.LastName,HL_PATIENT.name[0].given[0]+" "+HL_PATIENT.name[0].family],
+    ["Data de nascimento",TASY_MARIA.DT_NASCIMENTO,SF_MARIA.Birthdate,HL_PATIENT.birthDate],
+    ["Identificador","MRN "+TASY_MARIA.MRN,SF_MARIA.Id,HL_PATIENT.id.slice(0,8)+"… · CNS "+HL_PATIENT.identifier[0].value],
+    ["CPF",TASY_MARIA.CPF,"—","—"],
+    ["Diagnóstico",TASY_MARIA.CID_PRINCIPAL+" · "+TASY_MARIA.DS_DIAGNOSTICO,"—",HL_CONDITION.code.coding[0].code+" · "+HL_CONDITION.code.coding[0].display],
+    ["Estadiamento","—","—",HL_CONDITION.stage.summary],
+    ["Medicação em curso",TASY_MARIA.PRESCRICAO[0].MEDICAMENTO,"—","—"],
+    ["Resultado laboratorial","—","—",HL_OBS.code.coding[0].display+": "+HL_OBS.valueQuantity.value+" "+HL_OBS.valueQuantity.unit],
+    ["Telefone",TASY_MARIA.TELEFONE||"—",SF_MARIA.MobilePhone,"—"],
+    ["Canal preferido","—",SF_MARIA.Canal_Preferido__c,"—"],
+    ["Navegação / caso ativo","—",SF_MARIA.Cases[0].CaseNumber+" · "+SF_MARIA.Cases[0].Status,"—"],
+    ["Alergias",TASY_MARIA.ALERGIA.join(", "),"—","—"],
+  ];
+  return `<div class="card fadein" style="margin-top:18px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;"><h2>Os três sistemas, lado a lado</h2><span class="tag amber">campos conflitantes em âmbar</span></div>
+    <p style="color:var(--muted);font-size:12.5px;margin:4px 0 14px;">Mesma paciente, três respostas parciais. Nenhuma coluna sozinha responde a pergunta clínica completa.</p>
+    <div style="overflow-x:auto;"><table class="cmp-table"><thead><tr><th>Campo</th><th>HIS · Tasy (simulado)</th><th>CRM · Salesforce (simulado)</th><th>FHIR · HealthLake (simulado)</th></tr></thead>
+    <tbody>${rows.map(r=>{
+      const filled=r.slice(1).filter(v=>v!=="—"); const divergent = filled.length<3 || new Set(filled).size>1;
+      return `<tr class="${divergent?"cmp-row-divergent":""}"><td style="font-weight:700;color:var(--soft);white-space:nowrap;">${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`;
+    }).join("")}</tbody></table></div>
+  </div>`;
+}
+function toggleCmp(key){cmpVisible[key]=!cmpVisible[key];renderScreen();}
+
+function screenTasy(){
+  const found=queryState.tasy.trim().toLowerCase().includes("maria");
+  const p=TASY_MARIA;
+  return `
+  <div class="kicker">Ato 1 · Console 1 de 3</div>
+  <h1 class="title">HIS · Tasy (simulado)</h1>
+  <p class="sub">Diagnóstico, tratamento, medicamentos e consultas — no vocabulário e formato do prontuário eletrônico.</p>
+  <div class="console-shell tasy">
+    <div class="console-header"><span>TASY · MV / PRONTUÁRIO ELETRÔNICO (SIMULADO)</span><span style="opacity:.7;font-weight:400;text-transform:none;">rótulo neutro — não representa a interface real do fornecedor</span></div>
+    <div class="console-body">
+      <label style="font-size:11px;font-weight:700;text-transform:uppercase;color:#5b6674;display:block;margin-bottom:6px;">Buscar paciente (nome ou MRN)</label>
+      <input class="search-input mono" style="border:1px solid #9aa7b8;font-size:12px;" value="${esc(queryState.tasy)}" oninput="queryState.tasy=this.value;renderScreen()" />
+      ${!found?`<div class="empty-note" style="color:#5b6674;">Nenhum resultado para "${esc(queryState.tasy)}".</div>`:`
+      <table class="mono" style="margin-top:16px;font-size:11.5px;">
+        <tr><td style="color:#5b6674;width:170px;">MRN</td><td>${p.MRN}</td></tr>
+        <tr><td style="color:#5b6674;">NOME_PACIENTE</td><td>${p.NOME_PACIENTE}</td></tr>
+        <tr><td style="color:#5b6674;">DT_NASCIMENTO</td><td>${p.DT_NASCIMENTO}</td></tr>
+        <tr><td style="color:#5b6674;">CPF</td><td>${p.CPF}</td></tr>
+        <tr><td style="color:#5b6674;">SEXO</td><td>${p.SEXO}</td></tr>
+        <tr><td style="color:#5b6674;">CID_PRINCIPAL</td><td style="background:#fff3d6;color:#7a4a00;font-weight:700;">${p.CID_PRINCIPAL}</td></tr>
+        <tr><td style="color:#5b6674;">DS_DIAGNOSTICO</td><td style="background:#fff3d6;color:#7a4a00;font-weight:700;">${p.DS_DIAGNOSTICO}</td></tr>
+        <tr><td style="color:#5b6674;">ALERGIA</td><td>${p.ALERGIA.join(", ")}</td></tr>
+        <tr><td style="color:#5b6674;">TELEFONE</td><td>NULL</td></tr>
+      </table>
+      <div style="margin-top:14px;font-size:10.5px;font-weight:800;text-transform:uppercase;color:#3c4757;">PRESCRICAO[]</div>
+      <table style="border:1px solid #c7d0dc;font-size:11px;margin-top:4px;">
+        <tr style="background:#dde3ea;color:#3c4757;"><th style="border:1px solid #c7d0dc;">MEDICAMENTO</th><th style="border:1px solid #c7d0dc;">VIA</th><th style="border:1px solid #c7d0dc;">FREQ</th><th style="border:1px solid #c7d0dc;">DT_INICIO</th></tr>
+        ${p.PRESCRICAO.map(r=>`<tr style="background:#fff;"><td style="border:1px solid #c7d0dc;">${r.MEDICAMENTO}</td><td style="border:1px solid #c7d0dc;">${r.VIA}</td><td style="border:1px solid #c7d0dc;">${r.FREQ}</td><td style="border:1px solid #c7d0dc;">${r.DT_INICIO}</td></tr>`).join("")}
+      </table>
+      <div style="margin-top:14px;font-size:10.5px;font-weight:800;text-transform:uppercase;color:#3c4757;">ATENDIMENTO[]</div>
+      <table style="border:1px solid #c7d0dc;font-size:11px;margin-top:4px;">
+        <tr style="background:#dde3ea;color:#3c4757;"><th style="border:1px solid #c7d0dc;">TIPO</th><th style="border:1px solid #c7d0dc;">DT</th><th style="border:1px solid #c7d0dc;">SETOR/QUEIXA</th></tr>
+        ${p.ATENDIMENTO.map(r=>`<tr style="background:#fff;"><td style="border:1px solid #c7d0dc;">${r.TIPO}</td><td style="border:1px solid #c7d0dc;">${r.DT}</td><td style="border:1px solid #c7d0dc;">${r.SETOR||r.QUEIXA}</td></tr>`).join("")}
+      </table>`}
+    </div>
+    ${found?`<div class="missing-bar" style="background:#fef3f2;color:#B54708;"><b style="text-transform:uppercase;font-size:11px;">O que este sistema NÃO sabe</b><br><span style="color:#7a271a;">telefone do paciente · canal de contato preferido · resultados de laboratório · estadiamento estruturado (TNM)</span></div>`:""}
+  </div>
+  ${found?`<div class="cmp-toggle-wrap"><button class="btn-secondary" onclick="toggleCmp('tasy')">${cmpVisible.tasy?"Ocultar comparação":"Ver os três lado a lado →"}</button></div>`:""}
+  ${cmpVisible.tasy?comparisonTable():""}
+  `;
+}
+
+function screenSalesforce(){
+  const found=queryState.salesforce.trim().toLowerCase().includes("maria");
+  const c=SF_MARIA;
+  return `
+  <div class="kicker">Ato 1 · Console 2 de 3</div>
+  <h1 class="title">CRM · Salesforce (simulado)</h1>
+  <p class="sub">Navegação, contatos, relacionamento e acompanhamento — o lado humano da jornada.</p>
+  <div class="console-shell salesforce">
+    <div class="console-header"><span>SALESFORCE · HEALTH CLOUD (SIMULADO)</span><span style="opacity:.7;font-weight:400;text-transform:none;">rótulo neutro — não representa a interface real do fornecedor</span></div>
+    <div class="console-body">
+      <label style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--soft);display:block;margin-bottom:6px;">Buscar contato</label>
+      <input class="search-input" style="border:1px solid #bcdcff;" value="${esc(queryState.salesforce)}" oninput="queryState.salesforce=this.value;renderScreen()" />
+      ${!found?`<div class="empty-note" style="color:var(--soft);">Nenhum resultado para "${esc(queryState.salesforce)}".</div>`:`
+      <div class="grid grid-2" style="margin-top:16px;">
+        <div style="background:#fff;border:1px solid #bcdcff;border-radius:12px;padding:14px;">
+          <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;color:var(--blue);margin-bottom:8px;">Contato</div>
+          <div style="font-size:16px;font-weight:800;">${c.FirstName} ${c.LastName}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;">Nascimento: ${c.Birthdate}</div>
+          <div style="font-size:12px;color:var(--muted);">Email: ${c.Email}</div>
+          <div style="font-size:12px;color:var(--muted);">Celular: ${c.MobilePhone}</div>
+          <span class="tag blue" style="margin-top:8px;">Canal preferido: ${c.Canal_Preferido__c}</span>
+        </div>
+        <div style="background:#fff;border:1px solid #bcdcff;border-radius:12px;padding:14px;">
+          <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;color:var(--blue);margin-bottom:8px;">Identificadores</div>
+          <div style="font-size:12px;color:var(--muted);">Contact Id<br><span class="mono" style="color:var(--ink);">${c.Id}</span></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px;">MRN externo<br><span class="mono" style="color:var(--amber);">não preenchido</span></div>
+        </div>
+        <div style="background:#fff;border:1px solid #bcdcff;border-radius:12px;padding:14px;grid-column:1/-1;">
+          <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;color:var(--blue);margin-bottom:8px;">Case ${c.Cases[0].CaseNumber}</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px;">${c.Cases[0].Subject}</div>
+          <span class="tag" style="background:#DCFCE7;color:#166534;">${c.Cases[0].Status}</span>
+          <span style="font-size:12px;color:var(--muted);margin-left:8px;">Responsável: ${c.Cases[0].Owner}</span>
+        </div>
+      </div>`}
+    </div>
+    ${found?`<div class="missing-bar" style="background:#fef3f2;color:#B54708;"><b style="text-transform:uppercase;font-size:11px;">O que este sistema NÃO sabe</b><br><span style="color:#7a271a;">CID / diagnóstico estruturado · medicações em curso · resultados de laboratório · estadiamento</span></div>`:""}
+  </div>
+  ${found?`<div class="cmp-toggle-wrap"><button class="btn-secondary" onclick="toggleCmp('salesforce')">${cmpVisible.salesforce?"Ocultar comparação":"Ver os três lado a lado →"}</button></div>`:""}
+  ${cmpVisible.salesforce?comparisonTable():""}
+  `;
+}
+
+function screenHealthlake(){
+  const found=queryState.healthlake.trim().toLowerCase().includes("maria");
+  return `
+  <div class="kicker">Ato 1 · Console 3 de 3</div>
+  <h1 class="title">FHIR Datastore · HealthLake (simulado)</h1>
+  <p class="sub">Dados clínicos estruturados — a única fonte que já "fala a língua" do Hub.</p>
+  <div class="console-shell healthlake">
+    <div class="console-header"><span>AWS HEALTHLAKE · FHIR R4 (SIMULADO)</span><span style="opacity:.7;font-weight:400;text-transform:none;">rótulo neutro — não representa a interface real do fornecedor</span></div>
+    <div class="console-body">
+      <label style="font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,.5);display:block;margin-bottom:6px;">GET /Patient?name=</label>
+      <input class="search-input mono" style="border:1px solid #2c4a3c;background:rgba(0,0,0,.3);color:var(--mint);" value="${esc(queryState.healthlake)}" oninput="queryState.healthlake=this.value;renderScreen()" />
+      ${!found?`<div class="empty-note" style="color:rgba(255,255,255,.5);">Nenhum resultado para "${esc(queryState.healthlake)}".</div>`:`
+      <div style="margin-top:16px;">
+        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:4px;"># GET /Patient/${HL_PATIENT.id}</div>
+        <div style="border-radius:8px;background:rgba(0,0,0,.3);border:1px solid #2c4a3c;padding:12px;margin-bottom:12px;">${jsonView(HL_PATIENT).replace('class="json"','class="json" style="color:#fff"')}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:4px;"># GET /Condition?patient=${HL_PATIENT.id}</div>
+        <div style="border-radius:8px;background:rgba(0,0,0,.3);border:1px solid #2c4a3c;padding:12px;margin-bottom:12px;">${jsonView(HL_CONDITION).replace('class="json"','class="json" style="color:#fff"')}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:4px;"># GET /Observation?patient=${HL_PATIENT.id}&code=26499-4</div>
+        <div style="border-radius:8px;background:rgba(0,0,0,.3);border:1px solid #2c4a3c;padding:12px;">${jsonView(HL_OBS).replace('class="json"','class="json" style="color:#fff"')}</div>
+      </div>`}
+    </div>
+    ${found?`<div class="missing-bar" style="background:rgba(0,0,0,.2);color:#ff9d8a;"><b style="text-transform:uppercase;font-size:11px;">O que este sistema NÃO sabe</b><br><span style="color:#ffb3a3;">telefone / canal de contato · caso de navegação · alergias · duplicidade de cadastro no Tasy</span></div>`:""}
+  </div>
+  ${found?`<div class="cmp-toggle-wrap"><button class="btn-secondary" onclick="toggleCmp('healthlake')">${cmpVisible.healthlake?"Ocultar comparação":"Ver os três lado a lado →"}</button></div>`:""}
+  ${cmpVisible.healthlake?comparisonTable():""}
+  `;
+}
+
+/* ---- ATO 2: sync ---- */
+const STEP_PROGRESS=[{line:0,key:"tasy",pct:35},{line:1,key:"tasy",pct:100},{line:2,key:"salesforce",pct:100},{line:3,key:"healthlake",pct:100},
+  {line:4,key:"mpi",pct:35},{line:5,key:"mpi",pct:70},{line:6,key:"mpi",pct:100},{line:7,key:"normalize",pct:100},{line:8,key:"validate",pct:100},{line:9,key:"load",pct:100}];
+const SYNC_STEPS=["tasy","salesforce","healthlake","mpi","normalize","validate","load"];
+const SYNC_LABEL={tasy:"Tasy",salesforce:"Salesforce",healthlake:"HealthLake",mpi:"MPI",normalize:"Normalize",validate:"Validate",load:"Load"};
+let syncProgress=Object.fromEntries(SYNC_STEPS.map(k=>[k,0]));
+let syncRevealed=0, syncRunning=false, syncTimeouts=[];
+
+function screenSync(){
+  const finished = syncRevealed===SYNC_LOG.length && !syncRunning;
+  return `
+  <div class="kicker">Ato 2 · Motor de sincronização</div>
+  <h1 class="title">Transformando três verdades parciais em uma</h1>
+  <p class="sub">Ingestão → resolução de identidade (MPI) → normalização FHIR/mCODE → validação → carga no tenant. Nada instantâneo — cada lote simula latência real de conector.</p>
+  <p style="font-size:11.5px;color:var(--amber);font-weight:700;margin:-10px 0 18px;">⚠ Esta simulação comprime em segundos um programa que, no mundo real, é construído em conjunto com o hospital ao longo de 6 meses — <a href="#setup" onclick="goTo('setup')" style="text-decoration:underline;color:var(--amber);">veja como →</a></p>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;">
+    <button class="btn-primary" ${syncRunning?"disabled":""} onclick="runSync()">${syncRunning?"Sincronizando…":(syncRevealed>0?"Rodar sincronização novamente":"Rodar sincronização")}</button>
+    ${STATE.syncRunId>0?`<span style="font-size:12px;color:var(--soft);">execução #${STATE.syncRunId}</span>`:""}
+  </div>
+  <div class="grid grid-2">
+    <div>
+      <div class="grid grid-4" style="margin-bottom:18px;">
+        ${SYNC_STEPS.map(k=>`<div class="card" style="padding:12px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:10.5px;font-weight:800;text-transform:uppercase;color:var(--soft);">${SYNC_LABEL[k]}</span>
+          <span class="tabular" style="font-size:10.5px;font-weight:800;color:${syncProgress[k]===100?"var(--mintDim)":"var(--soft)"}">${syncProgress[k]}%</span></div>
+          <div style="height:5px;border-radius:99px;background:var(--line);overflow:hidden;"><div style="height:100%;border-radius:99px;background:var(--mint);width:${syncProgress[k]}%;transition:width .5s;"></div></div>
+        </div>`).join("")}
+      </div>
+      ${finished?`<div class="card fadein" style="border-color:var(--mint);">
+        <span class="tag">sincronização concluída</span>
+        <div style="font-size:18px;font-weight:800;color:var(--dark);margin:10px 0 6px;">1 paciente, 3 fontes, 1 verdade</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">${HUB_METRICS.tenantPatientCount.toLocaleString("pt-BR")} pacientes carregados no tenant hospital-parceiro · taxa de match automático ${HUB_METRICS.mpiMatchRatePct}% · latência média ${HUB_METRICS.avgSyncLatencyMs}ms.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-mint-outline" onclick="goTo('mpi')">Ver fila de conflitos do MPI →</button>
+          <button class="btn-mint-outline" onclick="goTo('paciente')">Ver Golden Record da Maria →</button>
+          <button class="btn-secondary" onclick="goTo('setup')">Ver como isso é construído de verdade →</button>
+        </div>
+      </div>`:""}
+    </div>
+    <div class="term" id="termBox">
+      <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:8px;" class="mono">$ oncolife-hub sync --tenant hospital-parceiro</div>
+      <div id="termLines"></div>
+    </div>
+  </div>`;
+}
+function paintTermLines(){
+  const box=document.getElementById("termLines"); if(!box) return;
+  let html="";
+  for(let i=0;i<syncRevealed;i++){const l=SYNC_LOG[i];html+=`<div class="term-line fadein" style="color:${TONE_COLOR[l.tone]}"><span style="color:rgba(255,255,255,.35)">[${l.t}]</span> ${esc(l.text)}</div>`;}
+  if(syncRunning) html+=`<span class="cursor-blink"></span>`;
+  if(syncRevealed===0 && !syncRunning) html=`<div style="color:rgba(255,255,255,.3);font-size:12px;" class="mono">Aguardando execução…</div>`;
+  box.innerHTML=html;
+  const term=document.getElementById("termBox"); if(term) term.scrollTop=term.scrollHeight;
+}
+function runSync(){
+  syncTimeouts.forEach(clearTimeout); syncTimeouts=[];
+  syncRevealed=0; syncProgress=Object.fromEntries(SYNC_STEPS.map(k=>[k,0])); syncRunning=true;
+  setState({syncRunId:STATE.syncRunId+1,syncHasRun:true});
+  renderScreen();
+  let acc=300;
+  SYNC_LOG.forEach((line,i)=>{
+    acc+=line.delay;
+    const to=setTimeout(()=>{
+      syncRevealed=Math.max(syncRevealed,i+1);
+      const step=STEP_PROGRESS.find(s=>s.line===i); if(step) syncProgress[step.key]=step.pct;
+      if(i===SYNC_LOG.length-1){syncRunning=false;renderScreen();} else {
+        // update progress bars + terminal without full re-render (keeps state fluid)
+        document.querySelectorAll(".card .tabular").forEach(()=>{});
+        renderScreen();
+      }
+    },acc);
+    syncTimeouts.push(to);
+  });
+}
+
+/* ---- ATO 2: como o setup é construído de verdade ---- */
+function screenSetupReal(){
+  return `
+  <div class="kicker">Ato 2 · Isso não vem pronto de fábrica</div>
+  <h1 class="title">Como a conexão com o hospital é construída de verdade</h1>
+  <p class="sub">Tudo que você viu na sincronização é o <b>resultado</b> de um programa de integração. As integrações com os sistemas do hospital (Tasy, Salesforce, HealthLake ou outros) <b>não são plug-and-play</b>: cada conector é desenvolvimento sob medida, feito em conjunto com a TI de cada hospital — com discovery, implementação, testes e homologação.</p>
+  <div class="card" style="border-color:var(--mint);background:var(--light);margin-bottom:18px;">
+    <span class="tag" style="background:var(--dark);color:#fff;">princípio de setup</span>
+    <p style="font-size:13.5px;color:var(--ink);margin:10px 0 0;line-height:1.6;">Não pedimos ao hospital para "trocar de sistema". Pedimos acesso controlado aos dados oncológicos relevantes — o Oncolife desenvolve e opera os conectores; o hospital libera acessos nos prazos acordados e valida clinicamente os dados.</p>
+  </div>
+  <div class="card" style="border-color:var(--amber);background:var(--warnBg);margin-bottom:22px;">
+    <span class="tag amber">regra de ouro</span>
+    <p style="font-size:13.5px;color:#7a4a00;margin:10px 0 0;line-height:1.6;">Os 6 meses valem somente se o hospital cumprir os prazos de liberação de acesso (sandbox, credenciais, DPA, produção, escopos de escrita, suporte TI). Cada dia de atraso numa etapa de responsabilidade do hospital <b>estende o prazo final na mesma proporção</b> — atraso não reduz escopo nem qualidade, só desloca a data-fim.</p>
+  </div>
+  <h2 style="font-size:15px;color:var(--dark);margin-bottom:14px;">Programa de integração — 6 meses</h2>
+  <div style="display:flex;flex-direction:column;gap:0;margin-bottom:24px;">
+    ${SETUP_FASES.map((f,i)=>`<div class="tl-item"><div class="tl-rail"><div style="background:var(--dark);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;flex-shrink:0;">${f.n}</div>${i<SETUP_FASES.length-1?'<div class="tl-line"></div>':""}</div>
+      <div style="flex:1;margin-top:-1px;padding-bottom:6px;"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:2px;">
+        <span style="font-size:14px;font-weight:800;">${esc(f.label)}</span><span class="tag" style="background:var(--thBg);color:var(--soft);">${f.quando}</span></div>
+        <p style="font-size:12.5px;color:var(--muted);margin:2px 0 0;">${esc(f.desc)}</p>
+      </div></div>`).join("")}
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;margin-bottom:22px;">
+    <div style="padding:14px 16px;border-bottom:1px solid var(--line);"><h2>Quantos e quais sistemas — depende do hospital</h2></div>
+    <div style="padding:14px 16px;">
+      <p style="font-size:12.5px;color:var(--muted);margin:0 0 12px;">Tasy, Salesforce e HealthLake (usados nesta demo) são um exemplo. O Setup começa com o inventário oficial dos sistemas <i>deste</i> hospital — pode ser um só, podem ser cinco. Cada linha abaixo vira um conector desenvolvido sob medida, na mesma lógica.</p>
+      <div style="overflow-x:auto;"><table style="font-size:11.5px;">
+        <tr><th>Papel no hospital</th><th>Exemplo de sistema</th></tr>
+        ${SETUP_SISTEMAS.map(s=>`<tr><td style="font-weight:700;">${esc(s.papel)}</td><td style="color:var(--muted);">${esc(s.exemplo)}</td></tr>`).join("")}
+      </table></div>
+    </div>
+    <div style="padding:10px 16px;font-size:11.5px;color:var(--mintDim);background:var(--light);font-weight:600;">O Hub não depende de um único fornecedor — depende do contrato de dados combinado com cada hospital.</div>
+  </div>
+  <div class="grid grid-2" style="margin-bottom:22px;">
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--line);"><h2>RACI do setup (amostra)</h2></div>
+      <div style="overflow-x:auto;"><table style="font-size:11.5px;">
+        <tr><th>Atividade</th><th>Oncolife</th><th>TI Hospital</th><th>Oncologia</th><th>Jurídico</th></tr>
+        ${SETUP_RACI.map(r=>`<tr><td>${esc(r.atividade)}</td><td class="mono" style="font-weight:700;">${r.oncolife}</td><td class="mono" style="font-weight:700;">${r.ti}</td><td class="mono" style="font-weight:700;">${r.oncologia}</td><td class="mono" style="font-weight:700;">${r.juridico}</td></tr>`).join("")}
+      </table></div>
+      <div style="padding:8px 16px;font-size:10.5px;color:var(--soft);">R = Responsável · A = Aprovador · C = Consultado · I = Informado</div>
+    </div>
+    <div class="card">
+      <h2 style="margin-bottom:10px;">Checklist — o que precisamos do hospital</h2>
+      ${SETUP_CHECKLIST.map(c=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12.5px;">
+        <span style="color:var(--ink);">☐ ${esc(c.item)}</span><span style="color:var(--soft);white-space:nowrap;font-weight:700;">${c.prazo}</span></div>`).join("")}
+    </div>
+  </div>
+  <div class="card" style="border-color:var(--line);">
+    <span class="tag">aviso formal</span>
+    <p style="font-size:12.5px;color:var(--muted);margin:10px 0 0;line-height:1.6;">O Oncolife mantém desenvolvimento em paralelo (mocks, ambiente de testes, tenant, UX) enquanto aguarda o hospital — mas isso não conta como cumprimento dos gates e não impede a extensão do prazo. A integração com os sistemas do hospital só fecha com acesso real liberado por ele.</p>
+  </div>
+  <div class="cmp-toggle-wrap" style="margin-top:18px;"><button class="btn-secondary" onclick="goTo('mpi')">Voltar para o Hub →</button></div>
+  `;
+}
+
+/* ---- ATO 2: MPI ---- */
+let mpiFilter="todos";
+function scoreTag(score){if(score>=0.95)return{label:"auto-merge",cls:"tag"};if(score>=0.85)return{label:"revisão sugerida",cls:"tag amber"};return{label:"baixa confiança",cls:"tag danger"};}
+function conflictRow(c,expanded){
+  const tag=scoreTag(c.score); const resolution=STATE.mpiResolutions[c.id];
+  return `<div style="padding:12px 16px;border-bottom:1px solid var(--line);">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span class="${tag.cls}">${tag.label}</span>
+      <span class="mono" style="font-size:11.5px;color:var(--soft);">score ${c.score.toFixed(2)}</span>
+      <div style="flex:1;min-width:200px;font-size:13px;"><b>${esc(c.patientA)}</b> <span style="color:var(--soft);">≈</span> <b>${esc(c.patientB)}</b></div>
+      ${resolution?`<span class="tag" style="background:#DCFCE7;color:#166534;">${resolution==="mesclado"?"mesclado":"mantido separado"}</span>`
+        :`<div style="display:flex;gap:6px;">
+          <button style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:6px;border:none;background:var(--mint);color:#fff;cursor:pointer;" onclick="resolveMpi('${c.id}','mesclado')">Mesclar</button>
+          <button style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--soft);cursor:pointer;" onclick="resolveMpi('${c.id}','mantido_separado')">Manter separado</button>
+        </div>`}
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin:6px 0 0;">${esc(c.reason)}</p>
+    ${expanded&&c.detail?`<div style="margin-top:8px;border-radius:8px;background:var(--thBg);border:1px solid var(--line);padding:8px 12px;font-size:12px;color:var(--muted);">${esc(c.detail)}</div>`:""}
+  </div>`;
+}
+function resolveMpi(id,res){STATE.mpiResolutions[id]=res;saveState();renderScreen();}
+function screenMpi(){
+  const resolvedCount=Object.keys(STATE.mpiResolutions).length;
+  let rows=MPI_CONFLICTS.filter(c=>{const r=!!STATE.mpiResolutions[c.id];if(mpiFilter==="pendente")return !r;if(mpiFilter==="resolvido")return r;return true;});
+  return `
+  <div class="kicker">Ato 2 · Master Patient Index</div>
+  <h1 class="title">Fila de conflitos do MPI</h1>
+  <p class="sub">Correlação de identidades entre Tasy, Salesforce e HealthLake. Abaixo de 0,95 de confiança, o match vai para revisão humana — nunca é mesclado automaticamente.</p>
+  <div class="grid grid-4" style="margin-bottom:20px;">
+    ${kpi("Taxa de match automático",HUB_METRICS.mpiMatchRatePct+"%","mint")}
+    ${kpi("Conflitos na fila",HUB_METRICS.mpiConflicts,"amber")}
+    ${kpi("Resolvidos nesta sessão",resolvedCount)}
+    ${kpi("Confirmado automaticamente","score "+MARIA_MPI_CONFIRMED.score,"mint")}
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px;border-color:var(--amber);">
+    <div style="background:var(--warnBg);padding:8px 16px;font-size:11px;font-weight:800;text-transform:uppercase;color:var(--amber);">Caso em destaque — paciente da demo</div>
+    ${conflictRow(MPI_CONFLICTS[0],true)}
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+    ${["todos","pendente","resolvido"].map(f=>`<button onclick="mpiFilter='${f}';renderScreen()" style="font-size:12px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:inherit;${mpiFilter===f?"background:var(--dark);color:#fff;border:1px solid var(--dark);":"background:#fff;color:var(--soft);border:1px solid var(--line);"}">${f==="todos"?"Todos":f==="pendente"?"Pendentes":"Resolvidos"}</button>`).join("")}
+    <span style="font-size:12px;color:var(--soft);margin-left:auto;">${rows.length} de ${MPI_CONFLICTS.length}</span>
+  </div>
+  <div class="card" style="padding:0;max-height:520px;overflow-y:auto;">
+    ${rows.slice(1,60).map(c=>conflictRow(c,false)).join("")}
+  </div>
+  <p style="font-size:11.5px;color:var(--soft);margin-top:8px;">Mostrando os 59 conflitos seguintes de ${MPI_CONFLICTS.length-1} — a coorte completa segue o mesmo padrão de revisão.</p>
+  `;
+}
+
+/* ---- ATO 2: mapeamento ---- */
+const SRC_LABEL2={tasy:"Tasy",salesforce:"Salesforce",healthlake:"HealthLake"};
+const SRC_COLOR2={tasy:"#667085",salesforce:"#1570EF",healthlake:"#18362B"};
+function screenMapeamento(){
+  return `
+  <div class="kicker">Ato 2 · Normalização</div>
+  <h1 class="title">Diff origem → FHIR / mCODE</h1>
+  <p class="sub">Cada campo bruto tem um caminho FHIR de destino documentado. O que não mapeia automaticamente vira erro de validação — nunca é descartado silenciosamente.</p>
+  <div class="grid grid-4" style="margin-bottom:20px;">
+    ${kpi("Campos mapeados (amostra)",MAPPING_ROWS.length,"mint")}
+    ${kpi("Perfil","FHIR R4 + mCODE")}
+    ${kpi("Erros de validação",HUB_METRICS.mappingErrors,"amber")}
+    ${kpi("Completude por Resource","71–99%")}
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    ${MAPPING_ROWS.map(r=>`<div class="card" style="padding:0;overflow:hidden;">
+      <div class="grid" style="grid-template-columns:1fr 1fr;">
+        <div style="padding:14px 16px;border-right:1px solid var(--line);">
+          <span class="tag" style="color:${SRC_COLOR2[r.src]};background:${SRC_COLOR2[r.src]}14;">${SRC_LABEL2[r.src]} · ${esc(r.field)}</span>
+          <div class="mono" style="font-size:13px;margin-top:8px;word-break:break-word;">${esc(r.val)}</div>
+        </div>
+        <div style="padding:14px 16px;background:rgba(232,245,241,.4);">
+          <span class="tag">${r.res} · ${esc(r.path)}</span>
+          <div class="mono" style="font-size:12.5px;margin-top:8px;color:var(--mintDim);word-break:break-word;">${esc(r.fhirVal)}</div>
+          ${r.note?`<p style="font-size:11.5px;color:var(--soft);margin-top:8px;">${esc(r.note)}</p>`:""}
+        </div>
+      </div>
+    </div>`).join("")}
+  </div>
+  <div class="card" style="margin-top:26px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h2>Fila de erros de validação</h2><span class="tag danger">${MAPPING_ERRORS.length} no total</span></div>
+    <table><tr><th>Resource</th><th>Campo</th><th>Origem</th><th>Mensagem</th></tr>
+    ${MAPPING_ERRORS.slice(0,8).map(e=>`<tr><td style="font-weight:700;">${e.resource}</td><td class="mono" style="font-size:11px;">${e.field}</td><td>${SRC_LABEL2[e.source]}</td><td style="color:var(--muted);">${e.message}</td></tr>`).join("")}
+    </table>
+    <p style="font-size:11.5px;color:var(--soft);margin-top:8px;">Mostrando 8 de ${MAPPING_ERRORS.length} — mesmo padrão de erro se repete pela coorte sintética.</p>
+  </div>`;
+}
+
+/* ---- ATO 3: paciente 360 ---- */
+function screenPaciente(){
+  if(STATE.consentRevoked){
+    return `<div style="max-width:640px;margin:0 auto;padding:60px 0;text-align:center;">
+      <div class="card" style="border-color:var(--danger);">
+        <span class="tag danger">consentimento revogado</span>
+        <h1 style="font-size:19px;font-weight:800;color:var(--dark);margin:10px 0;">Dados removidos da visão da equipe</h1>
+        <p style="color:var(--muted);font-size:13.5px;">A paciente revogou o consentimento de compartilhamento (simulado em <b>Governança</b>). Enquanto isso, nenhum dado clínico é exibido nesta tela — mesmo para a equipe assistencial.</p>
+        <button class="btn-mint-outline" style="margin-top:14px;" onclick="goTo('governanca')">Ir para Governança →</button>
+      </div></div>`;
+  }
+  PROV_REG=[]; const p=GOLDEN;
+  const initials=p.name.split(" ").map(n=>n[0]).slice(0,2).join("");
+  return `
+  <div class="kicker">Ato 3 · Visão 360°</div>
+  <h1 class="title">Uma jornada oncológica única e longitudinal</h1>
+  <p class="sub">Essa informação não existia assim em nenhum sistema. Cada campo carrega um selo clicável de origem — clique para ver o dado bruto e o caminho FHIR de destino.</p>
+  <div class="card" style="margin-bottom:18px;">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="width:44px;height:44px;border-radius:50%;background:var(--mint);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px;">${initials}</div>
+      <div><div style="font-size:18px;font-weight:800;">${p.name}</div><div style="font-size:12px;color:var(--soft);">Nascimento ${p.birthDate.split("-").reverse().join("/")} · id ${p.id}</div></div>
+      <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
+        ${p.identifiers.map(idf=>`<span class="tag" style="background:var(--thBg);color:var(--soft);">${SRC_LABEL2[idf.system]}: ${esc(idf.value)}</span>`).join("")}
+      </div>
+    </div>
+    <div class="grid grid-4">
+      <div><div style="font-size:11px;text-transform:uppercase;color:var(--soft);margin-bottom:4px;">Diagnóstico</div><div style="font-size:13.5px;font-weight:700;margin-bottom:6px;">${p.diagnosis.display} <span style="color:var(--soft);font-weight:400;">(${p.diagnosis.icd10})</span></div>${provBadge(p.fields.diagnostico)}</div>
+      <div><div style="font-size:11px;text-transform:uppercase;color:var(--soft);margin-bottom:4px;">Estadiamento</div><div style="font-size:13.5px;font-weight:700;margin-bottom:6px;">${p.diagnosis.staging} <span style="color:var(--soft);font-weight:400;">(${p.diagnosis.icdo3})</span></div>${provBadge(p.fields.estadiamento)}</div>
+      <div><div style="font-size:11px;text-transform:uppercase;color:var(--soft);margin-bottom:4px;">Tratamento atual</div><div style="font-size:13.5px;font-weight:700;margin-bottom:6px;">${p.currentTreatment}</div>${provBadge(p.fields.medicacao)}</div>
+      <div><div style="font-size:11px;text-transform:uppercase;color:var(--soft);margin-bottom:4px;">Equipe responsável</div><div style="font-size:13.5px;font-weight:700;margin-bottom:6px;">${p.team.join(" · ")}</div>${provBadge(p.fields.navegacao)}</div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:18px;border-color:var(--amber);background:var(--warnBg);">
+    <span class="tag amber">insight cross-fonte — nenhum sistema isolado produziria isso</span>
+    <p style="font-size:15px;font-weight:700;margin-top:10px;line-height:1.5;">⚠ ${p.insight}</p>
+  </div>
+  <div class="grid grid-2" style="margin-bottom:18px;">
+    <div class="card"><div style="font-size:11px;text-transform:uppercase;color:var(--soft);margin-bottom:8px;">Telefone / canal preferido</div><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:13.5px;">WhatsApp</span>${provBadge(p.fields.telefone)}</div></div>
+    <div class="card"><div style="font-size:11px;text-transform:uppercase;color:var(--soft);margin-bottom:8px;">Alergias</div><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:13.5px;">Dipirona</span>${provBadge(p.fields.alergia)}</div></div>
+  </div>
+  <div class="card">
+    <h2 style="margin-bottom:16px;">Timeline oncológica unificada</h2>
+    ${p.timeline.map((ev,i)=>`<div class="tl-item"><div class="tl-rail"><div class="tl-dot"></div>${i<p.timeline.length-1?'<div class="tl-line"></div>':""}</div>
+      <div style="flex:1;margin-top:-2px;"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:2px;">
+        <span class="tabular" style="font-size:12px;font-weight:800;color:var(--soft);">${fmtDateBR(ev.date)}</span>
+        <span style="font-size:14px;font-weight:800;">${ev.label}</span>${provBadge(ev.prov)}</div>
+        ${ev.detail?`<p style="font-size:12.5px;color:var(--muted);margin:0;">${esc(ev.detail)}</p>`:""}
+      </div></div>`).join("")}
+  </div>`;
+}
+
+/* ---- ATO 4: API console ---- */
+const API_EXAMPLES=[
+  {id:"ex1",method:"GET",path:"/Patient?identifier=MRN|4471982",desc:"Busca por identificador nascido no Tasy"},
+  {id:"ex2",method:"GET",path:"/Condition?patient=onc-1042&category=problem-list-item",desc:"Condição — dado combinado Tasy + HealthLake"},
+  {id:"ex3",method:"GET",path:"/Observation?patient=onc-1042&code=http://loinc.org|26499-4",desc:"Observação laboratorial nascida no HealthLake"},
+  {id:"ex4",method:"GET",path:"/Observation?patient=onc-1042&code=ESAS&date=ge2026-08-01",desc:"PROs nascidos no app do paciente (Oncolife Care)"},
+  {id:"ex5",method:"POST",path:"/Observation",desc:"Gravar novo check-in ESAS (requer escopo de escrita)"},
+];
+let apiSelected="ex1", apiScope="leitura", apiResult=null, apiLatency=null, apiLoading=false, apiCopied=false;
+function apiBuildResponse(id){
+  switch(id){
+    case "ex1": return {resourceType:"Patient",id:GOLDEN_ID,identifier:[{system:"urn:oid:tasy-mrn",value:"4471982"},{system:"urn:oid:CNS",value:"700504812345678"}],name:[{given:["Maria"],family:"de Almeida"}],birthDate:"1968-03-14",meta:{source:["tasy","healthlake"]}};
+    case "ex2": return {resourceType:"Condition",id:"cnd-8f2a-0001",subject:{reference:"Patient/"+GOLDEN_ID},code:{coding:[{system:"ICD-10-CM",code:"C50.9",display:"Neoplasia maligna da mama"},{system:"ICD-O-3",code:"8500/3",display:"Carcinoma ductal infiltrante"}]},stage:[{summary:{text:"cT2 N1 M0 — Estágio IIB"}}],meta:{source:["tasy","healthlake"]}};
+    case "ex3": return {resourceType:"Observation",id:"obs-neutro-0805",status:"final",subject:{reference:"Patient/"+GOLDEN_ID},code:{coding:[{system:"http://loinc.org",code:"26499-4",display:"Neutrófilos [#/volume] no Sangue"}]},valueQuantity:{value:1.2,unit:"10*3/uL"},effectiveDateTime:"2026-08-05",meta:{source:["healthlake"]}};
+    case "ex4": return {resourceType:"Bundle",type:"searchset",total:2,entry:[{resource:{resourceType:"Observation",id:"obs-esas-0806",code:{text:"ESAS"},component:[{code:{text:"dor"},valueInteger:6},{code:{text:"náusea"},valueInteger:4},{code:{text:"fadiga"},valueInteger:7}],effectiveDateTime:"2026-08-06",meta:{source:["oncolife"]}}},{resource:{resourceType:"Observation",id:"obs-esas-0730",code:{text:"ESAS"},component:[{code:{text:"dor"},valueInteger:3},{code:{text:"náusea"},valueInteger:5},{code:{text:"fadiga"},valueInteger:5}],effectiveDateTime:"2026-07-30",meta:{source:["oncolife"]}}}]};
+    default: return {};
+  }
+}
+function apiRunQuery(ex,scope){
+  if(ex.method==="POST"&&scope==="leitura") return {status:403,statusText:"Forbidden",body:{resourceType:"OperationOutcome",issue:[{severity:"error",code:"forbidden",diagnostics:"Token com escopo somente leitura — POST negado."}]}};
+  if(ex.method==="POST") return {status:201,statusText:"Created",body:{resourceType:"Observation",id:"obs-esas-"+Date.now().toString().slice(-6),status:"final",subject:{reference:"Patient/"+GOLDEN_ID},code:{text:"ESAS"},meta:{source:["oncolife"]}}};
+  return {status:200,statusText:"OK",body:apiBuildResponse(ex.id)};
+}
+function apiCurl(ex,scope){const token=scope==="leitura"?"demo_read_only_token":"demo_read_write_token";const base="https://hub-demo.oncolife.care/fhir";
+  if(ex.method==="GET") return `curl -H "Authorization: Bearer ${token}" \\\n  "${base}${ex.path}"`;
+  return `curl -X POST -H "Authorization: Bearer ${token}" -H "Content-Type: application/fhir+json" \\\n  -d '{"resourceType":"Observation"}' \\\n  "${base}${ex.path}"`;
+}
+function apiSelect(id){apiSelected=id;apiResult=null;renderScreen();}
+function apiSetScope(s){apiScope=s;renderScreen();}
+function apiExecute(){
+  apiLoading=true; renderScreen();
+  const ex=API_EXAMPLES.find(e=>e.id===apiSelected); const start=performance.now(); const ms=140+Math.random()*260;
+  setTimeout(()=>{apiResult=apiRunQuery(ex,apiScope);apiLatency=Math.round(performance.now()-start);apiLoading=false;renderScreen();},ms);
+}
+function apiCopyCurl(){const ex=API_EXAMPLES.find(e=>e.id===apiSelected);const curl=apiCurl(ex,apiScope);
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(curl).catch(()=>{});}
+  apiCopied=true;renderScreen();setTimeout(()=>{apiCopied=false;renderScreen();},1600);}
+function screenApiConsole(){
+  const ex=API_EXAMPLES.find(e=>e.id===apiSelected);
+  return `
+  <div class="kicker">Ato 4 · Acesso padronizado</div>
+  <h1 class="title">Console FHIR</h1>
+  <p class="sub">A mesma query responde independentemente de o dado ter nascido no Tasy, no Salesforce ou no HealthLake — <code>meta.source</code> mostra a origem de cada campo.</p>
+  <div style="display:grid;grid-template-columns:280px 1fr;gap:20px;">
+    <div>
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--soft);margin-bottom:8px;">Exemplos</div>
+      ${API_EXAMPLES.map(e=>`<button onclick="apiSelect('${e.id}')" style="display:block;width:100%;text-align:left;border-radius:10px;border:1px solid ${apiSelected===e.id?"var(--mint)":"var(--line)"};background:${apiSelected===e.id?"var(--light)":"#fff"};padding:10px 12px;margin-bottom:8px;cursor:pointer;font-family:inherit;">
+        <span class="tag" style="${e.method==="POST"?"background:var(--warnBg);color:var(--amber);":""}">${e.method}</span>
+        <div class="mono" style="font-size:11.5px;margin-top:6px;word-break:break-all;">${e.path}</div>
+        <div style="font-size:11px;color:var(--soft);margin-top:4px;">${e.desc}</div>
+      </button>`).join("")}
+      <div style="padding-top:8px;">
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--soft);margin-bottom:6px;">Escopo do token</div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:6px;"><input type="radio" ${apiScope==="leitura"?"checked":""} onchange="apiSetScope('leitura')"> Leitura</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;"><input type="radio" ${apiScope==="leitura_escrita"?"checked":""} onchange="apiSetScope('leitura_escrita')"> Leitura + escrita</label>
+      </div>
+    </div>
+    <div>
+      <div style="border-radius:16px;background:var(--dark2);border:1px solid #2c4a3c;padding:16px;margin-bottom:12px;">
+        <div class="mono" style="font-size:12.5px;color:var(--mint);margin-bottom:12px;">${ex.method} ${ex.path}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="btn-primary" ${apiLoading?"disabled":""} onclick="apiExecute()">${apiLoading?"Executando…":"Executar"}</button>
+          <button onclick="apiCopyCurl()" style="font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:8px;border:1px solid #2c4a3c;background:transparent;color:rgba(255,255,255,.8);cursor:pointer;font-family:inherit;">${apiCopied?"Copiado ✓":"Copiar cURL"}</button>
+          ${apiLatency!==null&&!apiLoading?`<span class="mono" style="font-size:11.5px;color:rgba(255,255,255,.4);margin-left:auto;">${apiLatency}ms</span>`:""}
+        </div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden;min-height:320px;">
+        ${apiResult?`<div style="padding:8px 16px;font-size:12px;font-weight:800;background:${apiResult.status<300?"var(--light)":"var(--dangerBg)"};color:${apiResult.status<300?"var(--mintDim)":"var(--danger)"};">
+            ${apiResult.status} ${apiResult.statusText} ${apiResult.status<300?'<span style="opacity:.6;font-weight:400;">— origem preservada em meta.source</span>':""}</div>
+          <div style="padding:16px;background:var(--dark2);">${jsonView(apiResult.body).replace('class="json"','class="json" style="color:#fff"')}</div>`
+          :`<div style="padding:32px;text-align:center;color:var(--soft);font-size:13px;">${apiLoading?"Consultando o hub…":"Selecione um exemplo e clique em Executar."}</div>`}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---- ATO 5: write-back ---- */
+let wbPain=6, wbNausea=4, wbFatigue=7, wbSending=false;
+function screenWriteback(){
+  const last=STATE.checkins[0];
+  const obsPreview = last ? {resourceType:"Observation",id:"obs-esas-"+String(new Date(last.submittedAt).getTime()).slice(-6),status:"final",
+    subject:{reference:"Patient/"+GOLDEN_ID},code:{text:"ESAS"},component:[{code:{text:"dor"},valueInteger:last.pain},{code:{text:"náusea"},valueInteger:last.nausea},{code:{text:"fadiga"},valueInteger:last.fatigue}],
+    effectiveDateTime:last.submittedAt,meta:{source:["oncolife"]}} : null;
+  return `
+  <div class="kicker">Ato 5 · Write-back</div>
+  <h1 class="title">O ciclo se fecha</h1>
+  <p class="sub">O paciente relata em casa → o Hub gera um <code>Observation</code> FHIR → o dado volta para dentro do Tasy, com origem identificada.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;">
+    <div class="card">
+      <span class="tag">app do paciente · Oncolife Care</span>
+      <h2 style="margin:12px 0 14px;">Check-in ESAS — ${GOLDEN.name}</h2>
+      ${sliderField("Dor","wbPain",wbPain)}${sliderField("Náusea","wbNausea",wbNausea)}${sliderField("Fadiga","wbFatigue",wbFatigue)}
+      <button class="btn-primary" style="width:100%;margin-top:6px;" ${wbSending?"disabled":""} onclick="wbSubmit()">${wbSending?"Enviando…":"Enviar check-in"}</button>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line);">
+        <button class="btn-danger" style="width:100%;" onclick="wbSos()">🆘 Botão SOS</button>
+        ${STATE.sosTriggeredAt?`<p style="font-size:11.5px;color:var(--danger);margin-top:8px;">Alerta disparado às ${new Date(STATE.sosTriggeredAt).toLocaleTimeString("pt-BR")} — Communication + Location gerados, equipe notificada.</p>`:""}
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="tag" style="border-radius:0;display:block;padding:10px 16px;">Observation FHIR gerado</div>
+      <div style="padding:16px;background:var(--dark2);min-height:260px;">
+        ${obsPreview?jsonView(obsPreview).replace('class="json"','class="json fadein" style="color:#fff"'):`<div style="color:rgba(255,255,255,.4);font-size:13px;text-align:center;padding:60px 0;">Aguardando envio do check-in…</div>`}
+      </div>
+    </div>
+    <div class="card">
+      <span class="tag amber">caixa de entrada · Tasy (simulado)</span>
+      <h2 style="margin:12px 0 14px;">Itens pendentes de revisão</h2>
+      ${!last?`<p style="font-size:13px;color:var(--soft);">Nenhum item novo.</p>`:
+        !STATE.tasyInboxDelivered?`<div style="font-size:13px;color:var(--soft);display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--amber);"></span>Chegando…</div>`:
+        `<div class="fadein" style="border:1px solid var(--line);border-radius:10px;padding:12px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Check-in de sintomas — ESAS</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Dor ${last.pain} · Náusea ${last.nausea} · Fadiga ${last.fatigue}</div>
+          <span class="tag">origem: Oncolife Care · paciente relatado</span>
+        </div>`}
+    </div>
+  </div>`;
+}
+function sliderField(label,varName,val){
+  return `<div style="margin-bottom:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><label style="font-size:12.5px;font-weight:700;">${label}</label><span class="tabular" style="font-size:12.5px;font-weight:800;color:var(--mintDim);">${val}</span></div>
+  <input type="range" min="0" max="10" value="${val}" oninput="${varName}=Number(this.value);renderScreen()"></div>`;
+}
+let wbTimer=null;
+function wbSubmit(){
+  wbSending=true;renderScreen();
+  setTimeout(()=>{
+    const checkin={submittedAt:new Date().toISOString(),pain:wbPain,nausea:wbNausea,fatigue:wbFatigue};
+    STATE.checkins.unshift(checkin); STATE.tasyInboxDelivered=false; saveState();
+    wbSending=false; renderScreen();
+    if(wbTimer) clearTimeout(wbTimer);
+    wbTimer=setTimeout(()=>{STATE.tasyInboxDelivered=true;saveState();renderScreen();},3000);
+  },220);
+}
+function wbSos(){STATE.sosTriggeredAt=new Date().toISOString();saveState();renderScreen();}
+
+/* ---- ATO 6: painel ---- */
+const COMPLETENESS_BY_RESOURCE=[{label:"Patient",value:99},{label:"Condition",value:94},{label:"Observation",value:91},{label:"MedicationRequest",value:88},{label:"CarePlan",value:78},{label:"AllergyIntolerance",value:71}];
+const CURATED_IDS=["mpi-0001","mpi-0002","mpi-0003"];
+
+/* ---- painel executivo — mockup ilustrativo da interface real do Oncolife Care ---- */
+const EXEC_KPIS=[
+  {label:"Pacientes Ativos",val:"1.248",delta:"+8,2%",up:true,good:true},
+  {label:"Novos Pacientes",val:"286",delta:"+12,4%",up:true,good:true},
+  {label:"Visitas",val:"1.864",delta:"+7,7%",up:true,good:true},
+  {label:"Procedimentos Realizados",val:"2.531",delta:"+9,3%",up:true,good:true},
+  {label:"Taxa de Ocupação",val:"78%",delta:"+5 p.p.",up:true,good:true},
+  {label:"Alertas Críticos",val:"23",delta:"+15,7%",up:true,good:false},
+];
+const CARE_LINE_DIST=[
+  {label:"Mama",value:28,color:"var(--mint)"},
+  {label:"Colorretal",value:20,color:"var(--mintDim)"},
+  {label:"Pulmão",value:16,color:"var(--blue)"},
+  {label:"Próstata",value:12,color:"var(--dark)"},
+  {label:"Hematologia",value:10,color:"var(--amber)"},
+  {label:"Ginecológico",value:8,color:"#7c3aed"},
+  {label:"Outros",value:6,color:"var(--soft)"},
+];
+function buildActivePatientsTrend(){
+  const rng=mulberry32(77); const pts=[]; let v=940;
+  for(let i=0;i<19;i++){v+=10+rng()*12;pts.push(Math.round(v));}
+  pts.push(1248);
+  return pts;
+}
+const ACTIVE_PATIENTS_TREND=buildActivePatientsTrend();
+const DISCHARGE_STATS=[
+  {label:"Resposta Objetiva",value:68,delta:"+6 p.p. vs período anterior",up:true},
+  {label:"Controle da Doença",value:24,delta:"+3 p.p. vs período anterior",up:true},
+  {label:"Progressão",value:8,delta:"−2 p.p. vs período anterior",up:true},
+  {label:"Óbitos",value:3.2,delta:"+0,8 p.p. vs período anterior",up:false},
+];
+const SURVIVAL_SERIES=[
+  {label:"Mama",color:"var(--mint)",vals:[100,97,94,92,90,89]},
+  {label:"Próstata",color:"var(--blue)",vals:[100,96,93,89,87,85]},
+  {label:"Colorretal",color:"var(--amber)",vals:[100,92,84,76,70,67]},
+  {label:"Pulmão",color:"#7c3aed",vals:[100,80,64,52,45,40]},
+  {label:"Pâncreas",color:"var(--danger)",vals:[100,62,40,27,21,18]},
+];
+const RISK_PRED=[
+  {label:"Risco de Recaída (30 dias)",value:12,color:"var(--mint)",note:"baixo"},
+  {label:"Risco de Toxicidade",value:18,color:"var(--amber)",note:"moderado"},
+  {label:"Risco de Reinternação",value:9,color:"var(--mint)",note:"baixo"},
+];
+const OP_INDICATORS=[
+  {label:"Leitos de Oncologia",value:"45",sub:"ocupação da unidade",pct:76},
+  {label:"Cadeiras de Infusão",value:"62",sub:"ocupação da unidade",pct:82},
+  {label:"Salas de Consulta",value:"18",sub:"ocupação da unidade",pct:67},
+  {label:"Não Comparecimento",value:"8,6%",sub:"−1,2 p.p. vs período anterior"},
+  {label:"Tempo Médio de Espera",value:"28min",sub:"−6 min vs período anterior"},
+  {label:"Eficiência de Agenda",value:"87%",sub:"+4 p.p. vs período anterior"},
+];
+function ringSVG(pct,color,size,strokeW){
+  size=size||64; strokeW=strokeW||7;
+  const r=(size-strokeW)/2,c=size/2,circ=2*Math.PI*r,off=circ*(1-pct/100);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="transform:rotate(-90deg);transform-origin:50% 50%;">
+    <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="var(--thBg)" stroke-width="${strokeW}"/>
+    <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${color}" stroke-width="${strokeW}" stroke-linecap="round"
+      stroke-dasharray="${circ}" stroke-dashoffset="${off}"/>
+  </svg>`;
+}
+function donutSVG(items,size){
+  size=size||140; const strokeW=size*0.17,r=(size-strokeW)/2,c=size/2,circ=2*Math.PI*r; let acc=0;
+  const segs=items.map(it=>{
+    const segLen=circ*(it.value/100); const dashoffset=-acc; acc+=segLen;
+    return `<circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${it.color}" stroke-width="${strokeW}"
+      stroke-dasharray="${segLen} ${circ-segLen}" stroke-dashoffset="${dashoffset}"/>`;
+  }).join("");
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="transform:rotate(-90deg);transform-origin:50% 50%;">${segs}</svg>`;
+}
+function areaChartSVG(vals,w,h){
+  w=w||520; h=h||150; const pad=8;
+  const max=Math.max.apply(null,vals),min=Math.min.apply(null,vals),range=(max-min)||1;
+  const stepX=(w-pad*2)/(vals.length-1);
+  const pts=vals.map((v,i)=>[pad+i*stepX,pad+(1-(v-min)/range)*(h-pad*2)]);
+  const line=pts.map((p,i)=>(i===0?"M":"L")+p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
+  const area=line+` L${pts[pts.length-1][0].toFixed(1)},${h-pad} L${pts[0][0].toFixed(1)},${h-pad} Z`;
+  const last=pts[pts.length-1];
+  return `<svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="overflow:visible;display:block;">
+    <defs><linearGradient id="ocAreaGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00B98E" stop-opacity=".35"/><stop offset="100%" stop-color="#00B98E" stop-opacity="0"/>
+    </linearGradient></defs>
+    <path d="${area}" fill="url(#ocAreaGrad)"/>
+    <path d="${line}" fill="none" stroke="var(--mint)" stroke-width="2.5"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="4" fill="var(--mint)" stroke="#fff" stroke-width="2"/>
+  </svg>`;
+}
+function survivalChartSVG(series,w,h){
+  w=w||360; h=h||160; const pad=10;
+  const stepX=(w-pad*2)/(series[0].vals.length-1);
+  const toY=v=>pad+(1-v/100)*(h-pad*2);
+  const grid=[0,25,50,75,100].map(v=>`<line x1="${pad}" y1="${toY(v).toFixed(1)}" x2="${w-pad}" y2="${toY(v).toFixed(1)}" stroke="var(--line)" stroke-width="1"/>`).join("");
+  const paths=series.map(s=>{
+    const line=s.vals.map((v,i)=>(i===0?"M":"L")+(pad+i*stepX).toFixed(1)+","+toY(v).toFixed(1)).join(" ");
+    return `<path d="${line}" fill="none" stroke="${s.color}" stroke-width="2.25"/>`;
+  }).join("");
+  return `<svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="display:block;">${grid}${paths}</svg>`;
+}
+function screenPainelExecutivo(){
+  const donutTotal=COHORT.length?COHORT.length:1248;
+  return `
+  <div class="oc-shell">
+    <aside class="oc-sidebar">
+      <div class="oc-sidebar-logo"><span style="width:22px;height:22px;border-radius:7px;background:var(--mint);color:var(--dark);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;">OC</span>Oncolife Care</div>
+      <div class="oc-nav-item active"><span class="dot"></span>Visão Geral</div>
+      <div class="oc-nav-section">Análise Clínica</div>
+      <div class="oc-nav-item"><span class="dot"></span>Pacientes</div>
+      <div class="oc-nav-item"><span class="dot"></span>Protocolos</div>
+      <div class="oc-nav-item"><span class="dot"></span>Altas</div>
+      <div class="oc-nav-item"><span class="dot"></span>Toxicidades</div>
+      <div class="oc-nav-item"><span class="dot"></span>Sobrevida</div>
+      <div class="oc-nav-section">Gestão Operacional</div>
+      <div class="oc-nav-item"><span class="dot"></span>Leitos</div>
+      <div class="oc-nav-item"><span class="dot"></span>Consultas</div>
+      <div class="oc-nav-item"><span class="dot"></span>Recursos</div>
+      <div class="oc-nav-item"><span class="dot"></span>Alertas</div>
+      <div class="oc-nav-section">Inteligência</div>
+      <div class="oc-nav-item"><span class="dot"></span>Risco e Predição</div>
+      <div class="oc-nav-item"><span class="dot"></span>Indicadores</div>
+      <div class="oc-nav-item"><span class="dot"></span>Relatórios</div>
+      <div class="oc-sidebar-user"><span class="oc-avatar">MS</span><div><div style="font-weight:700;">Dra. Mariana Silva</div><div style="opacity:.6;">Oncologista</div></div></div>
+    </aside>
+    <div class="oc-main">
+      <div class="oc-topbar">
+        <div><div style="font-size:14px;font-weight:800;">Olá, Dra. Mariana</div><div style="font-size:11.5px;color:var(--soft);">Bem-vinda ao Oncolife Care</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="oc-topbar-pill">Hospital Parceiro</span>
+          <span class="oc-topbar-pill">Últimos 30 dias</span>
+        </div>
+      </div>
+      <div class="oc-body">
+        <div class="oc-kpi-row">
+          ${EXEC_KPIS.map(k=>`<div class="oc-kpi"><div class="lbl">${esc(k.label)}</div><div class="val">${k.val}</div><div class="delta ${k.good?"up":"down"}">${k.up?"↑":"↓"} ${k.delta} <span style="color:var(--soft);font-weight:500;">vs período anterior</span></div></div>`).join("")}
+        </div>
+        <div class="oc-row2">
+          <div class="oc-card">
+            <h4 style="display:flex;justify-content:space-between;align-items:baseline;">Pacientes Ativos ao Longo do Tempo <span style="font-weight:500;color:var(--soft);">Últimos 30 dias</span></h4>
+            ${areaChartSVG(ACTIVE_PATIENTS_TREND)}
+          </div>
+          <div class="oc-card">
+            <h4>Distribuição por Linha de Cuidado</h4>
+            <div style="display:flex;align-items:center;gap:16px;">
+              <div style="position:relative;width:120px;height:120px;flex-shrink:0;">
+                ${donutSVG(CARE_LINE_DIST,120)}
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                  <div style="font-size:16px;font-weight:800;">${donutTotal.toLocaleString("pt-BR")}</div>
+                  <div style="font-size:9px;color:var(--soft);text-transform:uppercase;">Total</div>
+                </div>
+              </div>
+              <div class="oc-legend">${CARE_LINE_DIST.map(c=>`<div class="row"><span class="sw" style="background:${c.color};"></span>${esc(c.label)}<b>${c.value}%</b></div>`).join("")}</div>
+            </div>
+          </div>
+        </div>
+        <div class="oc-row3">
+          <div class="oc-card">
+            <h4 style="display:flex;justify-content:space-between;align-items:baseline;">Altas Clínicas <span style="font-weight:500;color:var(--soft);">últimos 6 meses</span></h4>
+            ${DISCHARGE_STATS.map(d=>`
+              <div class="bar-row"><div class="bl" style="flex:0 0 118px;">${esc(d.label)}</div>
+                <div class="bar-track"><div class="bar-fill" style="width:${Math.min(d.value,100)}%;background:${d.up?"var(--mint)":"var(--danger)"}"></div></div>
+                <div class="bar-val">${String(d.value).replace(".",",")}%</div></div>
+              <div style="font-size:10px;color:${d.up?"var(--mintDim)":"var(--danger)"};margin:-6px 0 10px 128px;">${d.delta}</div>`).join("")}
+          </div>
+          <div class="oc-card">
+            <h4 style="display:flex;justify-content:space-between;align-items:baseline;">Sobrevida Global (OS) <span style="font-weight:500;color:var(--soft);">por Linha de Cuidado</span></h4>
+            <div style="display:flex;gap:10px;">
+              <div style="flex:1;min-width:0;">${survivalChartSVG(SURVIVAL_SERIES)}
+                <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--soft);margin-top:2px;"><span>0</span><span>12</span><span>24</span><span>36</span><span>48</span><span>60 meses</span></div>
+              </div>
+              <div class="oc-legend" style="flex-shrink:0;">${SURVIVAL_SERIES.map(s=>`<div class="row"><span class="sw" style="background:${s.color};"></span>${esc(s.label)}<b>${s.vals[s.vals.length-1]}%</b></div>`).join("")}</div>
+            </div>
+            <p style="font-size:9.5px;color:var(--soft);margin:8px 0 0;">Curvas ilustrativas calculadas pelo método de Kaplan-Meier sobre a coorte sintética.</p>
+          </div>
+          <div class="oc-card">
+            <h4 style="display:flex;justify-content:space-between;align-items:baseline;">Predição de Risco <span style="font-weight:500;color:var(--soft);">30 dias</span></h4>
+            <div style="display:flex;justify-content:space-around;flex-wrap:wrap;gap:10px;">
+              ${RISK_PRED.map(r=>`<div class="oc-ring-wrap">
+                <div style="position:relative;width:64px;height:64px;">${ringSVG(r.value,r.color,64,7)}
+                  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;">${r.value}%</div>
+                </div>
+                <div class="oc-ring-label">${esc(r.label)}<br><span style="color:${r.color};font-weight:700;">${r.note}</span></div>
+              </div>`).join("")}
+            </div>
+            <p style="font-size:9.5px;color:var(--soft);margin:10px 0 0;">Modelo ilustrativo — não é um dispositivo médico nem substitui julgamento clínico.</p>
+          </div>
+        </div>
+        <div class="oc-card">
+          <h4>Indicadores Operacionais</h4>
+          <div class="oc-opgrid">
+            ${OP_INDICATORS.map(o=>`<div class="oc-ring-wrap">
+              ${o.pct!==undefined
+                ? `<div style="position:relative;width:56px;height:56px;">${ringSVG(o.pct,"var(--mint)",56,6)}<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;">${o.value}</div></div>`
+                : `<div style="width:56px;height:56px;border-radius:50%;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:var(--mintDim);">${o.value}</div>`}
+              <div class="oc-ring-label"><b style="color:var(--ink);">${esc(o.label)}</b><br>${esc(o.sub)}</div>
+            </div>`).join("")}
+          </div>
+        </div>
+      </div>
+      <div class="oc-footer">
+        <span>Dados sintéticos, integrados de forma ilustrativa dos sistemas do hospital</span>
+        <span>LGPD Compliant · Oncolife Care</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function screenPainel(){
+  const siteCounts={}; COHORT.forEach(p=>siteCounts[p.site]=(siteCounts[p.site]||0)+1);
+  const siteDist=Object.entries(siteCounts).map(([label,value])=>({label,value})).sort((a,b)=>b.value-a.value);
+  const jCounts={}; COHORT.forEach(p=>jCounts[p.journeyStatus]=(jCounts[p.journeyStatus]||0)+1);
+  const journeyDist=Object.entries(jCounts).map(([label,value])=>({label,value})).sort((a,b)=>b.value-a.value);
+  const eCounts={}; MAPPING_ERRORS.forEach(e=>eCounts[e.source]=(eCounts[e.source]||0)+1);
+  const errDist=Object.entries(eCounts).map(([label,value])=>({label:SRC_LABEL2[label]||label,value}));
+  const curated=CURATED_IDS.map(id=>MPI_CONFLICTS.find(c=>c.id===id)).filter(Boolean);
+  return `
+  <div class="kicker">Ato 6 · Painel</div>
+  <h1 class="title">O dado limpo vira decisão clínica e operacional</h1>
+  <p class="sub">Depois que os Atos 2–5 organizam e padronizam o dado, ele alimenta o painel que médicos e gestores usam no dia a dia — a mesma base, em uma camada de decisão.</p>
+  <div class="card" style="border-color:var(--mint);background:var(--light);margin-bottom:20px;">
+    <span class="tag" style="background:var(--dark);color:#fff;">protótipo ilustrativo da interface real</span>
+    <p style="font-size:13.5px;color:var(--ink);margin:10px 0 0;line-height:1.6;">A tela abaixo reproduz, com dados 100% sintéticos, o painel executivo do Oncolife Care — a mesma interface que uma equipe clínica/gestora usaria em produção, agora alimentada pelo dado que acabou de ser normalizado nos atos anteriores.</p>
+  </div>
+  ${screenPainelExecutivo()}
+  <div style="max-width:1100px;margin:36px auto 0;">
+    <div style="text-align:center;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);margin-bottom:6px;">Por baixo do capô</div>
+    <h2 style="text-align:center;font-size:18px;margin-bottom:6px;">Escala, qualidade e SLA da sincronização</h2>
+    <p style="text-align:center;font-size:13px;color:var(--muted);max-width:640px;margin:0 auto 22px;">O painel acima só é confiável porque estas métricas técnicas — completude, taxa de match, fila de conflitos — estão sob controle.</p>
+  </div>
+  <div class="grid grid-4" style="margin-bottom:20px;">
+    ${kpi("Pacientes ativos",HUB_METRICS.activePatients.toLocaleString("pt-BR"))}
+    ${kpi("Requerem atenção",HUB_METRICS.requireAttention,"amber")}
+    ${kpi("Taxa de match MPI",HUB_METRICS.mpiMatchRatePct+"%","mint")}
+    ${kpi("Latência média de sync",HUB_METRICS.avgSyncLatencyMs+"ms")}
+  </div>
+  <div class="grid grid-2" style="margin-bottom:20px;">
+    ${barList("Completude por Resource",COMPLETENESS_BY_RESOURCE.map(r=>({label:r.label,value:r.value,suffix:"%"})),"var(--mint)")}
+    ${barList("Erros de mapeamento por conector",errDist,"var(--amber)")}
+    ${barList("Distribuição da coorte por sítio",siteDist,"var(--blue)")}
+    ${barList("Adesão por etapa da jornada",journeyDist,"var(--mintDim)")}
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div style="padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;"><h2>Fila de conflitos — 3 casos abríveis nesta tela</h2><span class="tag amber">${HUB_METRICS.mpiConflicts} no total</span></div>
+    ${curated.map((c,i)=>conflictRow(c,i===0)).join("")}
+  </div>`;
+}
+
+/* ---- ATO 6: governança ---- */
+let govUserFilter="todos", govActionFilter="todos";
+function screenGovernanca(){
+  const users=["todos",...new Set(AUDIT_LOG.map(a=>a.user))];
+  const actions=["todos",...new Set(AUDIT_LOG.map(a=>a.action))];
+  const rows=AUDIT_LOG.filter(a=>(govUserFilter==="todos"||a.user===govUserFilter)&&(govActionFilter==="todos"||a.action===govActionFilter));
+  const sirioSample=COHORT.slice(0,4).map(c=>c.name);
+  return `
+  <div class="kicker">Ato 6 · Governança</div>
+  <h1 class="title">Consentimento, tenant e auditoria (LGPD)</h1>
+  <p class="sub">Três garantias que precisam ser demonstráveis, não apenas prometidas em contrato.</p>
+  <div class="grid grid-2" style="margin-bottom:20px;">
+    <div class="card">
+      <h2 style="margin-bottom:6px;">Consentimento da paciente</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">${GOLDEN.name} · consentimento de compartilhamento de dados com a equipe assistencial.</p>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="tag" style="${STATE.consentRevoked?"background:var(--dangerBg);color:var(--danger);":"background:#DCFCE7;color:#166534;"}">${STATE.consentRevoked?"revogado":"concedido"}</span>
+        <button class="btn-secondary" onclick="toggleConsent()">${STATE.consentRevoked?"Restaurar consentimento":"Revogar consentimento"}</button>
+      </div>
+      ${STATE.consentRevoked?`<p style="font-size:12px;color:var(--danger);margin-top:12px;">A visão 360° da paciente (Ato 3) agora exibe apenas o aviso de revogação. <a href="#paciente" onclick="goTo('paciente')" style="text-decoration:underline;">Confirmar →</a></p>`:""}
+    </div>
+    <div class="card">
+      <h2 style="margin-bottom:6px;">Isolamento por tenant</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Cada hospital enxerga apenas os próprios dados sintéticos.</p>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <button class="btn-secondary" style="${STATE.tenant==="hospital-parceiro"?"background:var(--dark);color:#fff;border-color:var(--dark);":""}" onclick="setTenant('hospital-parceiro')">Hospital Parceiro</button>
+        <button class="btn-secondary" style="${STATE.tenant==="hospital-b"?"background:var(--dark);color:#fff;border-color:var(--dark);":""}" onclick="setTenant('hospital-b')">Hospital B (outro tenant)</button>
+      </div>
+      <div style="border-radius:10px;border:1px solid var(--line);background:var(--thBg);padding:12px;">
+        ${STATE.tenant==="hospital-parceiro"?`<div style="font-size:13px;">${[GOLDEN.name,...sirioSample].map(n=>`• ${n}`).join("<br>")}<br><span style="font-size:12px;color:var(--soft);">+ ${COHORT.length-4} pacientes sintéticos…</span></div>`
+          :`<p style="font-size:13px;color:var(--soft);">Nenhum paciente encontrado — 0 registros compartilhados com o Hospital Parceiro.</p>`}
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <h2>Log de auditoria</h2>
+      <div style="display:flex;gap:8px;">
+        <select style="font-size:12px;border:1px solid var(--line);border-radius:8px;padding:5px 8px;" onchange="govUserFilter=this.value;renderScreen()">${users.map(u=>`<option value="${u}" ${govUserFilter===u?"selected":""}>${u}</option>`).join("")}</select>
+        <select style="font-size:12px;border:1px solid var(--line);border-radius:8px;padding:5px 8px;" onchange="govActionFilter=this.value;renderScreen()">${actions.map(a=>`<option value="${a}" ${govActionFilter===a?"selected":""}>${a==="todos"?"todos":(ACTION_LABEL[a]||a)}</option>`).join("")}</select>
+      </div>
+    </div>
+    <div style="max-height:400px;overflow-y:auto;">
+      <table><tr><th>Timestamp</th><th>Usuário</th><th>Resource</th><th>Ação</th><th>Tenant</th></tr>
+      ${rows.map(r=>`<tr><td class="tabular" style="color:var(--soft);">${new Date(r.timestamp).toLocaleString("pt-BR")}</td><td class="mono">${r.user}</td><td class="mono">${r.resource}</td>
+        <td><span class="tag ${r.action.includes("consent")?"amber":""}">${ACTION_LABEL[r.action]}</span></td><td style="color:var(--soft);">${r.tenant}</td></tr>`).join("")}
+      </table>
+    </div>
+  </div>`;
+}
+function toggleConsent(){STATE.consentRevoked=!STATE.consentRevoked;saveState();renderScreen();}
+function setTenant(t){STATE.tenant=t;saveState();renderScreen();}
+
+/* ---- ATO 6: prazos ---- */
+function screenPrazos(){
+  let cumulative=0;
+  const rows=PROGRAM_GATES.map(g=>{const offset=STATE.gateOffsets[g.key]||0;cumulative+=offset;const adjustedDay=g.baselineDay+cumulative;
+    return Object.assign({},g,{offset,adjustedDay,date:addDays(PROGRAM_START,adjustedDay),baselineDate:addDays(PROGRAM_START,g.baselineDay)});});
+  const totalDelay=rows.reduce((a,r)=>a+r.offset,0); const finalGate=rows[rows.length-1]; const delayed=rows.filter(r=>r.offset>0);
+  return `
+  <div class="kicker">Ato 6 · Prazos</div>
+  <h1 class="title">Simulador de gates do programa</h1>
+  <p class="sub">Programa de 6 meses, início ${fmtFullDateBR(new Date(PROGRAM_START+"T00:00:00"))}. Arraste qualquer gate para ver o impacto em cascata na data de entrega.</p>
+  <div class="card" style="margin-bottom:22px;${totalDelay>0?"border-color:var(--amber);background:var(--warnBg);":"border-color:var(--mint);"}">
+    ${totalDelay===0?`<p style="font-size:14px;font-weight:700;">Nenhum atraso — entrega prevista em 6 meses, <b>${fmtFullDateBR(finalGate.date)}</b>.</p>`
+      :`<p style="font-size:14px;font-weight:700;">${delayed.map(g=>`${g.label} atrasado ${g.offset} dia${g.offset>1?"s":""}`).join(" + ")} → entrega 6 meses + ${totalDelay} dia${totalDelay>1?"s":""} <span style="color:var(--amber);">(${fmtFullDateBR(finalGate.date)})</span></p>`}
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px;">
+    ${rows.map(g=>`<div class="card">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-bottom:8px;">
+        <div><b style="font-size:14px;">${g.label}</b> <span style="font-size:12px;color:var(--soft);">baseline D+${g.baselineDay} · ${fmtFullDateBR(g.baselineDate)}</span></div>
+        <span class="tag ${g.offset>0?"amber":""}">${g.offset>0?"+"+g.offset+"d → ":""}${fmtFullDateBR(g.date)}</span>
+      </div>
+      <input type="range" class="amber" min="0" max="60" value="${g.offset}" oninput="setGateOffset('${g.key}',Number(this.value))">
+    </div>`).join("")}
+  </div>
+  <button class="btn-primary" style="margin-top:22px;background:var(--dark);" onclick="exportScenario()">Exportar cenário</button>
+  `;
+}
+function setGateOffset(key,val){STATE.gateOffsets[key]=val;saveState();renderScreen();}
+function exportScenario(){
+  let cumulative=0; const gates=PROGRAM_GATES.map(g=>{const offset=STATE.gateOffsets[g.key]||0;cumulative+=offset;const adjustedDay=g.baselineDay+cumulative;
+    return {gate:g.label,baselineDay:g.baselineDay,offsetDays:offset,adjustedDate:addDays(PROGRAM_START,adjustedDay).toISOString().slice(0,10)};});
+  const totalDelayDays=Object.values(STATE.gateOffsets).reduce((a,b)=>a+b,0);
+  const scenario={programStart:PROGRAM_START,gates,totalDelayDays,newDeliveryDate:gates[gates.length-1].adjustedDate};
+  const blob=new Blob([JSON.stringify(scenario,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="cenario-prazos-oncolife.json"; a.click(); URL.revokeObjectURL(url);
+}
+
+/* ---- ATO 7: operadoras de saúde (fase 2) ---- */
+function screenOpProblema(){
+  return `
+  <div class="kicker">Ato 7 · Fase 2 — Operadoras de Saúde</div>
+  <h1 class="title">A operadora vê o boleto, não a paciente</h1>
+  <p class="sub">Hoje a carteira oncológica é gerida por dados de faturamento (padrão TISS) — sem contexto clínico para saber quem está em risco antes que o sinistro aconteça.</p>
+  <div class="grid grid-4" style="margin-bottom:6px;">
+    ${kpi("Sinistralidade média (MLR) do setor",PAYER_METRICS.mlrAtualPct+"%","amber")}
+    ${kpi("Operadoras com prejuízo operacional",PAYER_METRICS.pctOperadorasPrejuizo+"%","amber")}
+    ${kpi("Perda anual do setor em fraude/ineficiência","R$ "+PAYER_METRICS.perdaFraudeIneficienciaBi+" bi","amber")}
+    ${kpi("Vidas oncológicas nesta carteira (simulada)",PAYER_METRICS.carteiraVidas.toLocaleString("pt-BR"))}
+  </div>
+  <p style="font-size:11px;color:var(--soft);margin:0 0 18px;">Fontes de mercado (não desta carteira sintética): IESS/EY — sinistralidade e perdas por fraude/ineficiência na saúde suplementar brasileira.</p>
+  <div class="console-shell tiss">
+    <div class="console-header"><span>TISS · FATURAMENTO DA CARTEIRA ONCOLÓGICA (SIMULADO)</span><span style="opacity:.7;font-weight:400;text-transform:none;">rótulo neutro — não representa a interface real de nenhuma operadora</span></div>
+    <div class="console-body">
+      <table style="width:100%;font-size:11.5px;border-collapse:collapse;">
+        <tr style="text-align:left;color:#5b21b6;"><th style="padding:6px 8px;">Guia TISS</th><th style="padding:6px 8px;">Beneficiário</th><th style="padding:6px 8px;">Procedimento</th><th style="padding:6px 8px;">Data</th><th style="padding:6px 8px;">Valor</th></tr>
+        ${TISS_CLAIMS_SAMPLE.map(c=>`<tr style="border-top:1px solid #ddd6fe;"><td class="mono" style="padding:6px 8px;">${c.numero}</td><td style="padding:6px 8px;">${esc(c.beneficiario)}</td><td style="padding:6px 8px;">${esc(c.procedimento)}</td><td style="padding:6px 8px;">${c.data}</td><td style="padding:6px 8px;font-weight:700;">${c.valor}</td></tr>`).join("")}
+      </table>
+    </div>
+    <div class="missing-bar" style="background:#fef3f2;color:#B54708;"><b style="text-transform:uppercase;font-size:11px;">O que este dado NÃO mostra</b><br><span style="color:#7a271a;">se o sinistro é clinicamente justificado · quem está em risco de internação nos próximos 30–90 dias · se há exame duplicado ou tratamento em disputa</span></div>
+  </div>
+  <div class="cmp-toggle-wrap"><button class="btn-secondary" onclick="goTo('oprede')">Ver como o Hub resolve isso →</button></div>
+  `;
+}
+function screenOpRede(){
+  return `
+  <div class="kicker">Ato 7 · Efeito de rede B2B2B</div>
+  <h1 class="title">O mesmo dado que protege o hospital também protege a operadora</h1>
+  <p class="sub">Quando o hospital credenciado e a operadora financiadora usam a mesma camada de interoperabilidade, o dado clínico estruturado no ponto de cuidado alimenta, em tempo real, o modelo de risco da carteira — sem que a operadora precise negociar dado a dado com cada hospital.</p>
+  <div class="card" style="margin-bottom:20px;">
+    <div style="display:flex;align-items:stretch;gap:4px;flex-wrap:wrap;">
+      <div class="flow-box">
+        <span class="tag">Hospital credenciado</span>
+        <div style="font-size:13.5px;font-weight:700;margin:8px 0 4px;">Golden Record de Maria de Almeida</div>
+        <p style="font-size:12px;color:var(--muted);margin:0;">Diagnóstico, estadiamento, tratamento e check-ins estruturados — o mesmo dado do Ato 3.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="border-color:var(--mint);background:var(--light);">
+        <span class="tag" style="background:var(--dark);color:#fff;">Oncolife Intelligence · camada Payer</span>
+        <div style="font-size:13.5px;font-weight:700;margin:8px 0 4px;">Cruzamento clínico + faturamento</div>
+        <p style="font-size:12px;color:var(--muted);margin:0;">Estratificação de risco da carteira e trilha de evidência por sinistro.</p>
+      </div>
+      <div class="flow-arrow">←</div>
+      <div class="flow-box">
+        <span class="tag blue">Operadora</span>
+        <div style="font-size:13.5px;font-weight:700;margin:8px 0 4px;">Faturamento TISS da carteira</div>
+        <p style="font-size:12px;color:var(--muted);margin:0;">Guias, procedimentos e valores — sem contexto clínico até aqui.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="border-color:var(--amber);background:var(--warnBg);margin-bottom:20px;">
+    <span class="tag amber">por que isso é um fosso competitivo (data moat)</span>
+    <p style="font-size:14px;font-weight:600;margin-top:10px;line-height:1.6;">Quanto mais hospitais credenciados também estruturam dados clínicos na Oncolife, mais preciso fica o modelo de risco de qualquer operadora conectada a essa rede — um efeito que soluções focadas em um único lado (só hospital ou só operadora) não conseguem reproduzir.</p>
+  </div>
+  <button class="hero-cta" style="background:var(--dark);" onclick="goTo('opcarteira')">Ver a carteira estratificada por risco →</button>
+  `;
+}
+function screenOpCarteira(){
+  const counts={alto:0,medio:0,baixo:0};
+  CARTEIRA_RISCO.forEach(p=>counts[p.riskBucket]++);
+  const rows=[{label:RISK_LABEL.alto,value:counts.alto},{label:RISK_LABEL.medio,value:counts.medio},{label:RISK_LABEL.baixo,value:counts.baixo}];
+  return `
+  <div class="kicker">Ato 7 · Gestão de risco populacional</div>
+  <h1 class="title">Carteira oncológica estratificada por risco</h1>
+  <p class="sub">Estratificação ilustrativa da carteira sintética por probabilidade de agravamento nos próximos 90 dias. <b>Não é um dispositivo médico nem uma pontuação clínica validada</b> — é uma simulação para fins de demonstração.</p>
+  <div class="grid grid-4" style="margin-bottom:20px;">
+    ${kpi("Vidas na carteira",PAYER_METRICS.carteiraVidas.toLocaleString("pt-BR"))}
+    ${kpi("Sinalizadas como alto risco",counts.alto.toLocaleString("pt-BR"),"amber")}
+    ${kpi("% da coorte sintética em risco médio+alto",Math.round((counts.alto+counts.medio)/CARTEIRA_RISCO.length*100)+"%")}
+    ${kpi("Modelo","ilustrativo","mint")}
+  </div>
+  ${barList("Distribuição da carteira sintética por faixa de risco",rows,"var(--amber)")}
+  <div class="card" style="margin-top:18px;border-color:var(--danger);">
+    <div style="background:var(--dangerBg);margin:-20px -22px 14px;padding:8px 22px;font-size:11px;font-weight:800;text-transform:uppercase;color:var(--danger);border-radius:16px 16px 0 0;">Caso em destaque — mesma paciente do Hub Hospitalar</div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;">
+      <span class="tag danger">Alto risco (90 dias)</span>
+      <span style="font-size:15px;font-weight:800;">${GOLDEN.name}</span>
+      <span style="font-size:12px;color:var(--soft);">carteirinha ${TISS_CLAIM_MARIA.carteirinha}</span>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin:10px 0 12px;">Sinal só é visível para a operadora porque o hospital também compartilha dados clínicos estruturados: neutrófilos baixos (05/08) + febre relatada no check-in (06/08) + quimioterapia agendada (10/08).</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn-mint-outline" onclick="goTo('paciente')">Ver evidência clínica completa no Hub Hospitalar →</button>
+      <button class="btn-mint-outline" onclick="goTo('opauditoria')">Ver auditoria do sinistro dela →</button>
+    </div>
+  </div>
+  `;
+}
+function screenOpAuditoria(){
+  PROV_REG=[];
+  return `
+  <div class="kicker">Ato 7 · Auditoria de sinistro</div>
+  <h1 class="title">Sinistro com rastreabilidade clínica vs. sinistro sem evidência</h1>
+  <p class="sub">A mesma trilha de proveniência que organiza o prontuário (Ato 3) também sustenta — ou contesta — a justificativa clínica de um sinistro de alto custo. Em ambiente real, a decisão de auditoria continua sendo humana; a plataforma entrega a trilha de evidência, não aprova nem nega sinistros automaticamente.</p>
+  <div class="grid grid-2">
+    <div class="card" style="border-color:var(--mint);">
+      <span class="tag" style="background:#DCFCE7;color:#166534;">aprovado com evidência clínica rastreável</span>
+      <div style="font-size:13px;color:var(--soft);margin:10px 0 2px;">Guia TISS ${TISS_CLAIM_MARIA.numero}</div>
+      <div style="font-size:15px;font-weight:800;">${esc(TISS_CLAIM_MARIA.procedimento)}</div>
+      <div style="font-size:13px;color:var(--muted);margin:4px 0 14px;">${esc(TISS_CLAIM_MARIA.beneficiario)} · ${TISS_CLAIM_MARIA.data} · <b>${TISS_CLAIM_MARIA.valor}</b></div>
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--soft);margin-bottom:8px;">Evidência clínica vinculada</div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;">
+        ${provBadge(GOLDEN.fields.diagnostico)}
+        ${provBadge(GOLDEN.fields.estadiamento)}
+        ${provBadge(GOLDEN.fields.medicacao)}
+        ${provBadge(GOLDEN.timeline[5].prov)}
+        ${provBadge(GOLDEN.timeline[6].prov)}
+      </div>
+    </div>
+    <div class="card" style="border-color:var(--amber);">
+      <span class="tag amber">sinalizado para revisão manual</span>
+      <div style="font-size:13px;color:var(--soft);margin:10px 0 2px;">Guia TISS ${TISS_CLAIM_CONTROL.numero}</div>
+      <div style="font-size:15px;font-weight:800;">${esc(TISS_CLAIM_CONTROL.procedimento)}</div>
+      <div style="font-size:13px;color:var(--muted);margin:4px 0 14px;">${esc(TISS_CLAIM_CONTROL.beneficiario)} · ${TISS_CLAIM_CONTROL.data} · <b>${TISS_CLAIM_CONTROL.valor}</b></div>
+      <div style="border-radius:8px;background:var(--warnBg);border:1px solid #fde8b8;padding:10px 12px;font-size:12.5px;color:#7a4a00;">Sem correlato clínico estruturado no hospital de origem para justificar a repetição do exame em menos de 10 dias — enviado para revisão humana antes do pagamento.</div>
+    </div>
+  </div>
+  <div class="cmp-toggle-wrap" style="margin-top:18px;"><button class="btn-secondary" onclick="goTo('opsimulador')">Ver o impacto disso na sinistralidade →</button></div>
+  `;
+}
+let opSimPct=0;
+function setOpSimPct(v){opSimPct=Number(v);renderScreen();}
+function screenOpSimulador(){
+  const maxReducaoPontos=6.0;
+  const reducao=(opSimPct/100)*maxReducaoPontos;
+  const mlrProjetado=(PAYER_METRICS.mlrAtualPct-reducao).toFixed(1);
+  const premioBase=PAYER_METRICS.premioIlustrativoMi*1000000;
+  const economiaMi=(premioBase*(reducao/100)/1000000).toFixed(2);
+  return `
+  <div class="kicker">Ato 7 · Simulador de sinistralidade</div>
+  <h1 class="title">Simulador ilustrativo de impacto na sinistralidade (MLR)</h1>
+  <p class="sub">Ajuste a fatia da carteira sob gestão ativa de risco e veja, de forma ilustrativa, o efeito potencial sobre a sinistralidade. <b>Não é uma promessa de resultado</b> — cenários reais dependem de auditoria clínica caso a caso e variam por carteira.</p>
+  <div class="card" style="margin-bottom:20px;${reducao>0?"border-color:var(--mint);":""}">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+      <div><b style="font-size:14px;">% da carteira sob monitoramento ativo de risco</b></div>
+      <span class="tag">${opSimPct}%</span>
+    </div>
+    <input type="range" min="0" max="100" step="5" value="${opSimPct}" oninput="setOpSimPct(this.value)">
+  </div>
+  <div class="grid grid-3" style="margin-bottom:20px;">
+    ${kpi("MLR atual (referência de mercado)",PAYER_METRICS.mlrAtualPct+"%","amber")}
+    ${kpi("MLR projetado (cenário ilustrativo)",mlrProjetado+"%",reducao>0?"mint":"")}
+    ${kpi("Economia ilustrativa/ano (carteira hipotética de R$ "+PAYER_METRICS.premioIlustrativoMi+"mi em prêmio)","R$ "+economiaMi+" mi",reducao>0?"mint":"")}
+  </div>
+  <div class="card" style="border-color:var(--dark);">
+    <span class="tag dark">proposta comercial · Intelligence Payer</span>
+    <div class="grid grid-3" style="margin-top:14px;">
+      <div><div style="font-size:11px;text-transform:uppercase;color:var(--soft);">Setup</div><div style="font-size:18px;font-weight:800;">R$ ${PAYER_METRICS.setupPayerReais.toLocaleString("pt-BR")}</div></div>
+      <div><div style="font-size:11px;text-transform:uppercase;color:var(--soft);">PMPM</div><div style="font-size:18px;font-weight:800;">R$ ${PAYER_METRICS.pmpmReais.toFixed(2).replace(".",",")} / vida ativa</div></div>
+      <div><div style="font-size:11px;text-transform:uppercase;color:var(--soft);">ARR de referência (10.000 vidas)</div><div style="font-size:18px;font-weight:800;">R$ ${PAYER_METRICS.arrReferenciaReais.toLocaleString("pt-BR")}</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--soft);margin-top:14px;">Modelo de monetização Fase 2 do plano de negócios — comercialização a partir de 2027, após a validação do efeito de rede com hospitais credenciados.</p>
+  </div>
+  `;
+}
+
+/* ============================================================
+   RENDER PRINCIPAL
+   ============================================================ */
+const SCREENS={home:screenHome,tasy:screenTasy,salesforce:screenSalesforce,healthlake:screenHealthlake,
+  sync:screenSync,setup:screenSetupReal,mpi:screenMpi,mapeamento:screenMapeamento,paciente:screenPaciente,apiconsole:screenApiConsole,
+  writeback:screenWriteback,painel:screenPainel,governanca:screenGovernanca,prazos:screenPrazos,
+  opproblema:screenOpProblema,oprede:screenOpRede,opcarteira:screenOpCarteira,opauditoria:screenOpAuditoria,opsimulador:screenOpSimulador};
+
+function renderScreen(){
+  const id=SEQUENCE[currentIndex].id;
+  document.getElementById("app").innerHTML = `<div class="fadein">${SCREENS[id]()}</div>`;
+  if(id==="sync") paintTermLines();
+}
+function render(){renderTopNav();renderScreen();renderPresBar();}
+
+/* init */
+(function init(){
+  const id=(location.hash||"").slice(1);
+  const idx=SEQUENCE.findIndex(s=>s.id===id);
+  currentIndex = idx>=0?idx:0;
+  if(!location.hash) location.hash=SEQUENCE[0].id;
+  render();
+})();
+</script>
+</body>
+</html>
